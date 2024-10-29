@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planos de Assinatura</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    
+    .plan-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    
+    .plan {
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      text-align: center;
+      flex-basis: 30%;
+    }
+    
+    .plan h2 {
+      margin-top: 0;
+    }
+    
+    .plan-price {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .plan-features ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    .plan-features li {
+      margin-bottom: 5px;
+    }
+    
+    .billing-period {
+      margin-bottom: 20px;
+    }
+    
+    .billing-period label {
+      margin-right: 10px;
+    }
+    
+    .billing-period select {
+      padding: 5px 10px;
+      font-size: 16px;
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Escolha seu Plano de Assinatura</h1>
+    
+    <div class="billing-period">
+      <label for="billing-period">Período de Contrato:</label>
+      <select id="billing-period">
+        <option value="annual" selected>1 Ano</option>
+        <option value="semiannual">6 Meses</option>
+        <option value="quarterly">3 Meses</option>
+        <option value="monthly">1 Mês</option>
+      </select>
+    </div>
+    
+    <div class="plan-container">
+      <div class="plan">
+        <h2>BASIC</h2>
+        <div class="plan-price" id="basic-price">R$ 397,00</div>
+        <div class="plan-features">
+          <ul>
+            <li>Acesso básico</li>
+            <li>Suporte limitado</li>
+            <li>Armazenamento: 5GB</li>
+          </ul>
+        </div>
+        <button class="btn">Assinar</button>
+      </div>
+      
+      <div class="plan">
+        <h2>STANDARD</h2>
+        <div class="plan-price" id="standard-price">R$ 597,00</div>
+        <div class="plan-features">
+          <ul>
+            <li>Acesso avançado</li>
+            <li>Suporte prioritário</li>
+            <li>Armazenamento: 20GB</li>
+          </ul>
+        </div>
+        <button class="btn">Assinar</button>
+      </div>
+      
+      <div class="plan">
+        <h2>PREMIUM</h2>
+        <div class="plan-price" id="premium-price">R$ 997,00</div>
+        <div class="plan-features">
+          <ul>
+            <li>Acesso completo</li>
+            <li>Suporte ilimitado</li>
+            <li>Armazenamento: 100GB</li>
+          </ul>
+        </div>
+        <button class="btn">Assinar</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const billingPeriodSelect = document.getElementById('billing-period');
+    const basicPriceElement = document.getElementById('basic-price');
+    const standardPriceElement = document.getElementById('standard-price');
+    const premiumPriceElement = document.getElementById('premium-price');
+    
+    const basicPrice = {
+      monthly: 9.99,
+      quarterly: 27.99,
+      semiannual: 497.00,
+      annual: 397.00
+    };
+    
+    const standardPrice = {
+      monthly: 19.99,
+      quarterly: 54.99,
+      semiannual: 697.00,
+      annual: 597.00
+    };
+    
+    const premiumPrice = {
+      monthly: 29.99,
+      quarterly: 81.99,
+      semiannual: 1197.00,
+      annual: 997.00
+    };
+
+    // Função para atualizar os preços com base no período selecionado
+    const updatePrices = (selectedPeriod) => {
+      basicPriceElement.textContent = `R$ ${basicPrice[selectedPeriod].toFixed(2)}`;
+      standardPriceElement.textContent = `R$ ${standardPrice[selectedPeriod].toFixed(2)}`;
+      premiumPriceElement.textContent = `R$ ${premiumPrice[selectedPeriod].toFixed(2)}`;
+    };
+
+    // Evento para mudar os preços ao selecionar um novo período
+    billingPeriodSelect.addEventListener('change', () => {
+      const selectedPeriod = billingPeriodSelect.value;
+      updatePrices(selectedPeriod);
+    });
+
+    // Atualiza os preços na carga inicial com o período padrão
+    updatePrices(billingPeriodSelect.value);
+  </script>
+
+</body>
+</html>
