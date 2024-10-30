@@ -13,7 +13,6 @@
             --card-purple: #9932cc;
             --card-blue: #0066cc;
         }
-
         body {
             margin: 0;
             padding: 0;
@@ -21,30 +20,25 @@
             background-color: var(--dark-bg);
             color: white;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-
         .pricing-header {
             text-align: center;
             color: var(--primary-green);
             margin-bottom: 30px;
             text-shadow: 0 0 10px rgba(0,255,0,0.5);
         }
-
         .billing-period {
             text-align: center;
             margin-bottom: 30px;
         }
-
         .billing-period label {
             color: white;
             margin-right: 10px;
         }
-
         .billing-period select {
             padding: 10px 20px;
             font-size: 16px;
@@ -53,7 +47,6 @@
             color: white;
             border: 1px solid var(--primary-green);
         }
-
         .plans-container {
             display: flex;
             flex-wrap: wrap;
@@ -61,7 +54,6 @@
             gap: 40px; /* Aumentado o espaçamento entre os cards */
             margin-bottom: 40px; /* Espaço adicional antes da mensagem de economia */
         }
-
         .plan-card {
             flex: 1;
             min-width: 280px;
@@ -74,50 +66,50 @@
             transition: transform 0.3s ease;
             transform: scale(1.05);
         }
-
         .plan-card:hover {
             transform: scale(1.08);
         }
-
         .basic { 
             background: linear-gradient(135deg, var(--card-red), #660000);
             box-shadow: 0 8px 25px rgba(255,68,68,0.3);
         }
-        
         .standard { 
             background: linear-gradient(135deg, var(--card-purple), #4B0082);
             box-shadow: 0 8px 25px rgba(153,50,204,0.3);
         }
-        
         .premium { 
             background: linear-gradient(135deg, var(--card-blue), #000066);
             box-shadow: 0 8px 25px rgba(0,102,204,0.3);
         }
-
         .discount-triangle {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 80px 80px 0 0; /* Tamanho do triângulo */
-        border-color: var(--primary-green) transparent transparent transparent;
-        opacity: 0;
-        animation: blinkSequence 6s infinite;
-    }
-
-    .discount-text {
-        position: absolute;
-        top: 15px; /* Ajuste a posição vertical */
-        left: 15px; /* Ajuste a posição horizontal */
-        transform: rotate(-45deg);
-        color: black; /* Cor do texto */
-        font-weight: bold;
-        font-size: 18px; /* Tamanho da fonte */
-        z-index: 1; /* Certifique-se de que o texto fique acima do triângulo */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 80px 80px 0 0; /* Aumentado o tamanho do triângulo */
+            border-color: var(--primary-green) transparent transparent transparent;
+            opacity: 0;
+            animation: blinkSequence 6s infinite;
         }
-
+        .basic .discount-triangle { animation-delay: 0s; }
+        .standard .discount-triangle { animation-delay: 2s; }
+        .premium .discount-triangle { animation-delay: 4s; }
+        @keyframes blinkSequence {
+            0%, 28% { opacity: 1; }
+            33%, 100% { opacity: 0; }
+        }
+        .discount-text {
+            position: absolute;
+            top: -65px;
+            left: 08px;
+            transform: rotate(-45deg);
+            color: black; /* Alterada a cor do texto para preto */
+            font-weight: bold;
+            font-size: 18px; /* Aumentado o tamanho da fonte */
+            z-index: 1;
+        }
         .plan-title {
             font-size: 32px;
             color: var(--primary-green);
@@ -127,25 +119,21 @@
             letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(0,255,0,0.3);
         }
-
         .features-list {
             text-align: center;
             margin: 30px 0;
             list-style: none;
             padding: 0;
         }
-
         .features-list li {
             padding: 12px 0;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
         .features-list li:before {
             content: "✓";
             color: var(--primary-green);
             margin-right: 10px;
         }
-
         .btn {
             display: block;
             width: 100%;
@@ -162,68 +150,58 @@
             transition: all 0.3s ease;
             animation: pulseButton 2s infinite;
         }
-
         @keyframes pulseButton {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-
         .btn:hover {
             filter: brightness(1.2);
         }
-
         .plan-price {
             font-size: 42px;
             font-weight: bold;
             margin: 20px 0;
             color: white;
         }
-
         .price-period {
             font-size: 16px;
             opacity: 0.8;
             margin-top: -10px;
         }
-
-        .savings-message {
+       .savings-message {
             text-align: center;
             color: var(--primary-green);
             font-weight: bold;
             margin: 20px auto;
             padding: 15px;
-            background-color: rgba(0,255,0,0.1);
+            background-color: rgba(0, 255, 0, 0.1);
             border-radius: 5px;
             border: 2px solid var(--primary-green);
             max-width: 800px; /* Limitando a largura máxima */
-            white-space: nowrap; /* Mantendo o texto em uma única linha */
+            white-space: normal; /* Permitir quebra de linha */
             overflow: hidden; /* Escondendo overflow */
             text-overflow: ellipsis; /* Adicionando reticências se necessário */
         }
-
         @keyframes highlight {
             0% { border-color: var(--primary-green); }
             50% { border-color: var(--primary-purple); }
             100% { border-color: var(--primary-green); }
         }
-
         @media (max-width: 768px) {
             .plans-container {
                 flex-direction: column;
                 align-items: center;
                 gap: 20px;
             }
-
             .plan-card {
                 width: 100%;
                 margin-bottom: 20px;
                 transform: scale(1);
             }
-
             .plan-card:hover {
                 transform: scale(1.03);
             }
-
             .savings-message {
                 white-space: normal; /* Permitindo quebra de linha em telas menores */
             }
@@ -233,7 +211,7 @@
 <body>
     <div class="container">
         <h1 class="pricing-header">Escolha seu Plano</h1>
-        
+
         <div class="billing-period">
             <label for="billing-period">Período de Contrato:</label>
             <select id="billing-period">
@@ -243,7 +221,7 @@
                 <option value="monthly">1 Mês</option>
             </select>
         </div>
-        
+
         <div class="plans-container">
             <div class="plan-card basic">
                 <div class="discount-triangle">
@@ -260,143 +238,166 @@
                     <li>2.550 inserções/mês</li>
                     <li>1 mídia Alternada</li>
                 </ul>
-                <button class="btn">Solicitar</button>
+                <button class="btn" id="basic-btn">Solicitar</button>
             </div>
-            
-            <div class="plan-card standard">
-                <div class="discount-triangle">
-                    <span class="discount-text" id="standard-discount"></span>
-                </div>
-                <div class="plan-header">
-                    <h2 class="plan-title">STANDARD</h2>
-                    <div class="plan-price" id="standard-price">R$ 597,00</div>
-                    <div class="price-period">/mês</div>
-                </div>
-                <ul class="features-list">
-                    <li>10 inserções por hora</li>
-                    <li>170 inserções por dia</li>
-                    <li>5.100 inserções/mês</li>
-                    <li>2 mídias Alternadas</li>
-                </ul>
-                <button class="btn">Solicitar</button>
+
+                    <div class="plan-card standard">
+            <div class="discount-triangle">
+                <span class="discount-text" id="standard-discount"></span>
             </div>
-            
-            <div class="plan-card premium">
-                <div class="discount-triangle">
-                    <span class="discount-text" id="premium-discount"></span>
-                </div>
-                <div class="plan-header">
-                    <h2 class="plan-title">PREMIUM</h2>
-                    <div class="plan-price" id="premium-price">R$ 997,00</div>
-                    <div class="price-period">/mês</div>
-                </div>
-                <ul class="features-list">
-                    <li>20 inserções por hora</li>
-                    <li>340 inserções por dia</li>
-                    <li>10.200 inserções/mês</li>
-                    <li>4 mídias Alternadas</li>
-                </ul>
-                <button class="btn">Solicitar</button>
+            <div class="plan-header">
+                <h2 class="plan-title">STANDARD</h2>
+                <div class="plan-price" id="standard-price">R$ 597,00</div>
+                <div class="price-period">/mês</div>
             </div>
+            <ul class="features-list">
+                <li>10 inserções por hora</li>
+                <li>170 inserções por dia</li>
+                <li>5.100 inserções/mês</li>
+                <li>2 mídias Alternadas</li>
+            </ul>
+            <button class="btn" id="standard-btn">Solicitar</button>
         </div>
 
-        <div class="savings-message" id="savings-message"></div>
+        <div class="plan-card premium">
+            <div class="discount-triangle">
+                <span class="discount-text" id="premium-discount"></span>
+            </div>
+            <div class="plan-header">
+                <h2 class="plan-title">PREMIUM</h2>
+                <div class="plan-price" id="premium-price">R$ 997,00</div>
+                <div class="price-period">/mês</div>
+            </div>
+            <ul class="features-list">
+                <li>20 inserções por hora</li>
+                <li>340 inserções por dia</li>
+                <li>10.200 inserções/mês</li>
+                <li>4 mídias Alternadas</li>
+            </ul>
+            <button class="btn" id="premium-btn">Solicitar</button>
+        </div>
     </div>
+    <div class="savings-message" id="savings-message"></div>
+</div>
 
-    <script>
-        const billingPeriodSelect = document.getElementById('billing-period');
-        const basicPriceElement = document.getElementById('basic-price');
-        const standardPriceElement = document.getElementById('standard-price');
-        const premiumPriceElement = document.getElementById('premium-price');
-        const savingsMessageElement = document.getElementById('savings-message');
-        const basicDiscountElement = document.getElementById('basic-discount');
-        const standardDiscountElement = document.getElementById('standard-discount');
-        const premiumDiscountElement = document.getElementById('premium-discount');
-        
-        const basicPrice = {
-            monthly: 697.00,
-            quarterly: 597.00,
-            semiannual: 497.00,
-            annual: 397.00
-        };
-        
-        const standardPrice = {
-            monthly: 897.00,
-            quarterly: 797.00,
-            semiannual: 697.00,
-            annual: 597.00
-        };
-        
-        const premiumPrice = {
-            monthly: 1597.00,
-            quarterly: 1397.00,
-            semiannual: 1197.00,
-            annual: 997.00
-        };
+<script>
+    const billingPeriodSelect = document.getElementById('billing-period');
+    const basicPriceElement = document.getElementById('basic-price');
+    const standardPriceElement = document.getElementById('standard-price');
+    const premiumPriceElement = document.getElementById('premium-price');
+    const savingsMessageElement = document.getElementById('savings-message');
+    const basicDiscountElement = document.getElementById('basic-discount');
+    const standardDiscountElement = document.getElementById('standard-discount');
+    const premiumDiscountElement = document.getElementById('premium-discount');
 
-        const formatCurrency = (value) => {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        };
+    const basicPrice = {
+        monthly: 697.00,
+        quarterly: 597.00,
+        semiannual: 497.00,
+        annual: 397.00
+    };
 
-        const calculateDiscount = (monthlyPrice, currentPrice) => {
-            return Math.round(((monthlyPrice - currentPrice) / monthlyPrice) * 100);
-        };
+    const standardPrice = {
+        monthly: 897.00,
+        quarterly: 797.00,
+        semiannual: 697.00,
+        annual: 597.00
+    };
 
-        const calculatePremiumSavings = (selectedPeriod) => {
-            if (selectedPeriod === 'monthly') {
-                return '';
-            }
+    const premiumPrice = {
+        monthly: 1597.00,
+        quarterly: 1397.00,
+        semiannual: 1197.00,
+        annual: 997.00
+    };
 
-            const monthlyPrice = premiumPrice.monthly;
-            const selectedPrice = premiumPrice[selectedPeriod];
-            const discount = calculateDiscount(monthlyPrice, selectedPrice);
-            const periodMonths = {
-                quarterly: 3,
-                semiannual: 6,
-                annual: 12
-            };
-            
-            const totalSavings = (monthlyPrice - selectedPrice) * periodMonths[selectedPeriod];
-            const periodText = {
-                quarterly: '3 meses',
-                semiannual: '6 meses',
-                annual: '12 meses'
-            };
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value);
+    };
 
-            return `🎉 SUPER OPORTUNIDADE NO PLANO PREMIUM! Economize ${formatCurrency(totalSavings)} em ${periodText[selectedPeriod]}! Aproveite ${discount}% de desconto em relação ao plano mensal. Quanto maior o período, maior seu desconto! 💰`;
+    const calculateDiscount = (monthlyPrice, currentPrice) => {
+        return Math.round(((monthlyPrice - currentPrice) / monthlyPrice) * 100);
+    };
+
+    const calculatePremiumSavings = (selectedPeriod) => {
+        if (selectedPeriod === 'monthly') {
+            return '';
+        }
+        const monthlyPrice = premiumPrice.monthly;
+        const selectedPrice = premiumPrice[selectedPeriod];
+        const discount = calculateDiscount(monthlyPrice, selectedPrice);
+        const periodMonths = {
+            quarterly: 3,
+            semiannual: 6,
+            annual: 12
         };
 
-        const updatePrices = (selectedPeriod) => {
-            basicPriceElement.textContent = formatCurrency(basicPrice[selectedPeriod]);
-            standardPriceElement.textContent = formatCurrency(standardPrice[selectedPeriod]);
-            premiumPriceElement.textContent = formatCurrency(premiumPrice[selectedPeriod]);
-            
-            if (selectedPeriod !== 'monthly') {
-                const basicDiscount = calculateDiscount(basicPrice.monthly, basicPrice[selectedPeriod]);
-                const standardDiscount = calculateDiscount(standardPrice.monthly, standardPrice[selectedPeriod]);
-                const premiumDiscount = calculateDiscount(premiumPrice.monthly, premiumPrice[selectedPeriod]);
-                
-                basicDiscountElement.textContent = `-${basicDiscount}%`;
-                standardDiscountElement.textContent = `-${standardDiscount}%`;
-                premiumDiscountElement.textContent = `-${premiumDiscount}%`;
-            } else {
-                basicDiscountElement.textContent = '';
-                standardDiscountElement.textContent = '';
-                premiumDiscountElement.textContent = '';
-            }
-
-            savingsMessageElement.innerHTML = calculatePremiumSavings(selectedPeriod);
+        const totalSavings = (monthlyPrice - selectedPrice) * periodMonths[selectedPeriod];
+        const periodText = {
+            quarterly: '3 meses',
+            semiannual: '6 meses',
+            annual: '12 meses'
         };
 
-        billingPeriodSelect.addEventListener('change', () => {
-            const selectedPeriod = billingPeriodSelect.value;
-            updatePrices(selectedPeriod);
-        });
+        return `SUPER OPORTUNIDADE NO PLANO PREMIUM! Economize ${formatCurrency(totalSavings)} em ${periodText[selectedPeriod]}! Aproveite ${discount}% de desconto em relação ao plano mensal. Quanto maior o período, maior seu desconto!`;
+    };
 
-        updatePrices(billingPeriodSelect.value);
-    </script>
+    const updatePrices = (selectedPeriod) => {
+        basicPriceElement.textContent = formatCurrency(basicPrice[selectedPeriod]);
+        standardPriceElement.textContent = formatCurrency(standardPrice[selectedPeriod]);
+        premiumPriceElement.textContent = formatCurrency(premiumPrice[selectedPeriod]);
+
+        if (selectedPeriod !== 'monthly') {
+            const basicDiscount = calculateDiscount(basicPrice.monthly, basicPrice[selectedPeriod]);
+            const standardDiscount = calculateDiscount(standardPrice.monthly, standardPrice[selectedPeriod]);
+            const premiumDiscount = calculateDiscount(premiumPrice.monthly, premiumPrice[selectedPeriod]);
+
+            basicDiscountElement.textContent = `-${basicDiscount}%`;
+            standardDiscountElement.textContent = `-${standardDiscount}%`;
+            premiumDiscountElement.textContent = `-${premiumDiscount}%`;
+        } else {
+            basicDiscountElement.textContent = '';
+            standardDiscountElement.textContent = '';
+            premiumDiscountElement.textContent = '';
+        }
+        savingsMessageElement.innerHTML = calculatePremiumSavings(selectedPeriod);
+    };
+
+    billingPeriodSelect.addEventListener('change', () => {
+        const selectedPeriod = billingPeriodSelect.value;
+        updatePrices(selectedPeriod);
+    });
+
+    updatePrices(billingPeriodSelect.value);
+
+    const sendWhatsAppMessage = (plan, period, price) => {
+        const phoneNumber = '+5541999217821';
+        const message = `Olá, eu gostaria de solicitar o plano ${plan} para o período de ${period}. O valor é ${price}.`;
+        const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    };
+
+    document.getElementById('basic-btn').addEventListener('click', () => {
+        const period = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
+        const price = basicPriceElement.textContent;
+        sendWhatsAppMessage('BASIC', period, price);
+    });
+
+    document.getElementById('standard-btn').addEventListener('click', () => {
+        const period = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
+        const price = standardPriceElement.textContent;
+        sendWhatsAppMessage('STANDARD', period, price);
+    });
+
+    document.getElementById('premium-btn').addEventListener('click', () => {
+        const period = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
+        const price = premiumPriceElement.textContent;
+        sendWhatsAppMessage('PREMIUM', period, price);
+    });
+</script>
 </body>
 </html>
+ 
