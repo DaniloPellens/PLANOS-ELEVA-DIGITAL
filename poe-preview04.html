@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Planos de assinatura para mídia digital com opções Basic, Standard e Premium">
+    <meta name="keywords" content="planos, assinatura, mídia digital, basic, standard, premium">
+    <meta name="author" content="Sua Empresa">
     <title>Planos de Assinatura</title>
     <style>
         :root {
@@ -12,18 +15,50 @@
             --card-red: #ff4444;
             --card-purple: #9932cc;
             --card-blue: #0066cc;
+            --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        body {
             font-family: 'Arial', sans-serif;
             background-color: var(--dark-bg);
             color: white;
+            line-height: 1.6;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+        }
+        .location-selector {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: rgba(0, 255, 0, 0.1);
+            border-radius: 8px;
+        }
+        .location-selector label {
+            color: var(--primary-green);
+            font-size: 18px;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .location-selector select {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            background: var(--primary-purple);
+            color: white;
+            border: 1px solid var(--primary-green);
+            cursor: pointer;
+            min-width: 200px;
+        }
+        .location-selector select:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
         }
         .pricing-header {
             text-align: center;
@@ -46,13 +81,18 @@
             background: var(--primary-purple);
             color: white;
             border: 1px solid var(--primary-green);
+            cursor: pointer;
+        }
+        .billing-period select:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
         }
         .plans-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 40px; /* Aumentado o espaçamento entre os cards */
-            margin-bottom: 40px; /* Espaço adicional antes da mensagem de economia */
+            gap: 40px;
+            margin-bottom: 40px;
         }
         .plan-card {
             flex: 1;
@@ -63,21 +103,21 @@
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: var(--transition-default);
             transform: scale(1.05);
         }
         .plan-card:hover {
             transform: scale(1.08);
         }
-        .basic { 
+        .basic {
             background: linear-gradient(135deg, var(--card-red), #660000);
             box-shadow: 0 8px 25px rgba(255,68,68,0.3);
         }
-        .standard { 
+        .standard {
             background: linear-gradient(135deg, var(--card-purple), #4B0082);
             box-shadow: 0 8px 25px rgba(153,50,204,0.3);
         }
-        .premium { 
+        .premium {
             background: linear-gradient(135deg, var(--card-blue), #000066);
             box-shadow: 0 8px 25px rgba(0,102,204,0.3);
         }
@@ -88,7 +128,7 @@
             width: 0;
             height: 0;
             border-style: solid;
-            border-width: 80px 80px 0 0; /* Aumentado o tamanho do triângulo */
+            border-width: 80px 80px 0 0;
             border-color: var(--primary-green) transparent transparent transparent;
             opacity: 0;
             animation: blinkSequence 6s infinite;
@@ -103,11 +143,11 @@
         .discount-text {
             position: absolute;
             top: -65px;
-            left: 08px;
+            left: 8px;
             transform: rotate(-45deg);
-            color: black; /* Alterada a cor do texto para preto */
+            color: black;
             font-weight: bold;
-            font-size: 18px; /* Aumentado o tamanho da fonte */
+            font-size: 18px;
             z-index: 1;
         }
         .plan-title {
@@ -147,16 +187,25 @@
             background: linear-gradient(45deg, var(--primary-green), #00cc00);
             color: var(--dark-bg);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition-default);
+            position: relative;
+            overflow: hidden;
             animation: pulseButton 2s infinite;
+        }
+        .btn:hover {
+            filter: brightness(1.2);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn:focus {
+            outline: 3px solid var(--primary-green);
+            outline-offset: 2px;
         }
         @keyframes pulseButton {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
-        }
-        .btn:hover {
-            filter: brightness(1.2);
         }
         .plan-price {
             font-size: 42px;
@@ -169,7 +218,7 @@
             opacity: 0.8;
             margin-top: -10px;
         }
-       .savings-message {
+        .savings-message {
             text-align: center;
             color: var(--primary-green);
             font-weight: bold;
@@ -178,10 +227,10 @@
             background-color: rgba(0, 255, 0, 0.1);
             border-radius: 5px;
             border: 2px solid var(--primary-green);
-            max-width: 800px; /* Limitando a largura máxima */
-            white-space: normal; /* Permitir quebra de linha */
-            overflow: hidden; /* Escondendo overflow */
-            text-overflow: ellipsis; /* Adicionando reticências se necessário */
+            max-width: 800px;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         @keyframes highlight {
             0% { border-color: var(--primary-green); }
@@ -203,201 +252,379 @@
                 transform: scale(1.03);
             }
             .savings-message {
-                white-space: normal; /* Permitindo quebra de linha em telas menores */
+                white-space: normal;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <main class="container">
+        <div class="location-selector">
+            <label for="location-select">Selecione a Unidade:</label>
+            <select id="location-select" aria-label="Selecione a unidade">
+                <option value="riogrande">Fazenda Rio Grande PR</option>
+                <option value="quitandinha">Quitandinha PR</option>
+            </select>
+        </div>
+
         <h1 class="pricing-header">Escolha seu Plano</h1>
 
         <div class="billing-period">
-            <label for="billing-period">Período de Contrato:</label>
-            <select id="billing-period">
+            <label for="billing-period" class="billing-label">Período de Contrato:</label>
+            <select id="billing-period" aria-label="Selecione o período de contrato">
                 <option value="annual">1 Ano</option>
                 <option value="semiannual">6 Meses</option>
                 <option value="quarterly">3 Meses</option>
                 <option value="monthly">1 Mês</option>
+                <option value="biweekly">15 Dias</option>
+                <option value="weekly">7 Dias</option>
             </select>
         </div>
 
-        <div class="plans-container">
-            <div class="plan-card basic">
-                <div class="discount-triangle">
+        <div class="plans-container" role="group" aria-label="Opções de planos">
+            <article class="plan-card basic" role="article" aria-labelledby="basic-title">
+                <div class="discount-triangle" aria-hidden="true">
                     <span class="discount-text" id="basic-discount"></span>
                 </div>
                 <div class="plan-header">
-                    <h2 class="plan-title">BASIC</h2>
-                    <div class="plan-price" id="basic-price">R$ 397,00</div>
+                    <h2 class="plan-title" id="basic-title">BASIC</h2>
+                    <div class="plan-price" id="basic-price" aria-label="Preço do plano basic">R$ 397,00</div>
                     <div class="price-period">/mês</div>
                 </div>
-                <ul class="features-list">
-                    <li>5 inserções por hora</li>
-                    <li>85 inserções por dia</li>
-                    <li>2.550 inserções/mês</li>
-                    <li>1 mídia Alternada</li>
+                <ul class="features-list" id="basic-features">
+                    <li id="basic-hourly"></li>
+                    <li id="basic-daily"></li>
+                    <li id="basic-monthly"></li>
+                    <li id="basic-media"></li>
+                    <li id="basic-duration"></li>
+                    <li id="basic-interval"></li>
+                    <li id="basic-costPerAd"></li>
                 </ul>
-                <button class="btn" id="basic-btn">Solicitar</button>
-            </div>
+                <button class="btn" id="basic-btn" aria-label="Solicitar plano Basic">Solicitar</button>
+            </article>
 
-                    <div class="plan-card standard">
-            <div class="discount-triangle">
-                <span class="discount-text" id="standard-discount"></span>
-            </div>
-            <div class="plan-header">
-                <h2 class="plan-title">STANDARD</h2>
-                <div class="plan-price" id="standard-price">R$ 597,00</div>
-                <div class="price-period">/mês</div>
-            </div>
-            <ul class="features-list">
-                <li>10 inserções por hora</li>
-                <li>170 inserções por dia</li>
-                <li>5.100 inserções/mês</li>
-                <li>2 mídias Alternadas</li>
-            </ul>
-            <button class="btn" id="standard-btn">Solicitar</button>
+            <article class="plan-card standard" role="article" aria-labelledby="standard-title">
+                <div class="discount-triangle" aria-hidden="true">
+                    <span class="discount-text" id="standard-discount"></span>
+                </div>
+                <div class="plan-header">
+                    <h2 class="plan-title" id="standard-title">STANDARD</h2>
+                    <div class="plan-price" id="standard-price" aria-label="Preço do plano standard">R$ 597,00</div>
+                    <div class="price-period">/mês</div>
+                </div>
+                <ul class="features-list" id="standard-features">
+                    <li id="standard-hourly"></li>
+                    <li id="standard-daily"></li>
+                    <li id="standard-monthly"></li>
+                    <li id="standard-media"></li>
+                    <li id="standard-duration"></li>
+                    <li id="standard-interval"></li>
+                    <li id="standard-costPerAd"></li>
+                </ul>
+                <button class="btn" id="standard-btn" aria-label="Solicitar plano Standard">Solicitar</button>
+            </article>
+
+            <article class="plan-card premium" role="article" aria-labelledby="premium-title">
+                <div class="discount-triangle" aria-hidden="true">
+                    <span class="discount-text" id="premium-discount"></span>
+                </div>
+                <div class="plan-header">
+                    <h2 class="plan-title" id="premium-title">PREMIUM</h2>
+                    <div class="plan-price" id="premium-price" aria-label="Preço do plano premium">R$ 997,00</div>
+                    <div class="price-period">/mês</div>
+                </div>
+                <ul class="features-list" id="premium-features">
+                    <li id="premium-hourly"></li>
+                    <li id="premium-daily"></li>
+                    <li id="premium-monthly"></li>
+                    <li id="premium-media"></li>
+                    <li id="premium-duration"></li>
+                    <li id="premium-interval"></li>
+                    <li id="premium-costPerAd"></li>
+                </ul>
+                <button class="btn" id="premium-btn" aria-label="Solicitar plano Premium">Solicitar</button>
+            </article>
         </div>
+        <div class="savings-message" id="savings-message" role="alert" aria-live="polite"></div>
+    </main>
 
-        <div class="plan-card premium">
-            <div class="discount-triangle">
-                <span class="discount-text" id="premium-discount"></span>
-            </div>
-            <div class="plan-header">
-                <h2 class="plan-title">PREMIUM</h2>
-                <div class="plan-price" id="premium-price">R$ 997,00</div>
-                <div class="price-period">/mês</div>
-            </div>
-            <ul class="features-list">
-                <li>20 inserções por hora</li>
-                <li>340 inserções por dia</li>
-                <li>10.200 inserções/mês</li>
-                <li>4 mídias Alternadas</li>
-            </ul>
-            <button class="btn" id="premium-btn">Solicitar</button>
-        </div>
-    </div>
-    <div class="savings-message" id="savings-message"></div>
-</div>
-
-<script>
-    const billingPeriodSelect = document.getElementById('billing-period');
-    const basicPriceElement = document.getElementById('basic-price');
-    const standardPriceElement = document.getElementById('standard-price');
-    const premiumPriceElement = document.getElementById('premium-price');
-    const savingsMessageElement = document.getElementById('savings-message');
-    const basicDiscountElement = document.getElementById('basic-discount');
-    const standardDiscountElement = document.getElementById('standard-discount');
-    const premiumDiscountElement = document.getElementById('premium-discount');
-
-    const basicPrice = {
-        monthly: 697.00,
-        quarterly: 597.00,
-        semiannual: 497.00,
-        annual: 397.00
-    };
-
-    const standardPrice = {
-        monthly: 897.00,
-        quarterly: 797.00,
-        semiannual: 697.00,
-        annual: 597.00
-    };
-
-    const premiumPrice = {
-        monthly: 1597.00,
-        quarterly: 1397.00,
-        semiannual: 1197.00,
-        annual: 997.00
-    };
-
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(value);
-    };
-
-    const calculateDiscount = (monthlyPrice, currentPrice) => {
-        return Math.round(((monthlyPrice - currentPrice) / monthlyPrice) * 100);
-    };
-
-    const calculatePremiumSavings = (selectedPeriod) => {
-        if (selectedPeriod === 'monthly') {
-            return '';
-        }
-        const monthlyPrice = premiumPrice.monthly;
-        const selectedPrice = premiumPrice[selectedPeriod];
-        const discount = calculateDiscount(monthlyPrice, selectedPrice);
-        const periodMonths = {
-            quarterly: 3,
-            semiannual: 6,
-            annual: 12
+    <script>
+        const LOCATIONS_SPECS = {
+            riogrande: {
+                basic: {
+                    hourly: "5 inserções por hora",
+                    daily: "85 inserções por dia",
+                    monthly: "2.550 inserções/mês",
+                    media: "1 mídia",
+                    duration: "Duração 10 Segundos",
+                    interval: "Intervalo 12 minutos",
+                    costPerAd: function(price) {
+                        return price / 2550;
+                    }
+                },
+                standard: {
+                    hourly: "10 inserções por hora",
+                    daily: "170 inserções por dia",
+                    monthly: "5.100 inserções/mês",
+                    media: "2 mídias Alternadas",
+                    duration: "Duração 10 Segundos",
+                    interval: "Intervalo 6 minutos",
+                    costPerAd: function(price) {
+                        return price / 5100;
+                    }
+                },
+                premium: {
+                    hourly: "20 inserções por hora",
+                    daily: "340 inserções por dia",
+                    monthly: "10.200 inserções/mês",
+                    media: "4 mídias Alternadas",
+                    duration: "Duração 10 Segundos",
+                    interval: "Intervalo 3 minutos",
+                    costPerAd: function(price) {
+                        return price / 10200;
+                    }
+                }
+            },
+            quitandinha: {
+                basic: {
+                    hourly: "5 inserções por hora",
+                    daily: "80 inserções por dia",
+                    monthly: "2.400 inserções/mês",
+                    media: "1 mídia",
+                    duration: "Duração 10 Segundos",
+                    interval: "Intervalo 12 minutos",
+                    costPerAd: function(price) {
+                        return price / 2400;
+                    }
+                },
+                standard: {
+                    hourly: "10 inserções por hora",
+                    daily: "160 inserções por dia",
+                    monthly: "4.800 inserções/mês",
+                    media: "2 mídias Alternadas",
+                    duration: "Duração 10 Segundos",
+                    interval: "Intervalo 6 minutos",
+                    costPerAd: function(price) {
+                        return price / 4800;
+                    }
+                },
+                premium: {
+                    hourly: "20 inserções por hora",
+                    daily: "320 inserções por dia",
+                    monthly: "9.600 inserções/mês",
+                    media: "4 mídias Alternadas",
+                    duration: "Duração 10 Segundos",
+                    interval: "Intervalo 3 minutos",
+                    costPerAd: function(price) {
+                        return price / 9600;
+                    }
+                }
+            }
         };
 
-        const totalSavings = (monthlyPrice - selectedPrice) * periodMonths[selectedPeriod];
-        const periodText = {
-            quarterly: '3 meses',
-            semiannual: '6 meses',
-            annual: '12 meses'
+        const LOCATIONS_PRICES = {
+            riogrande: {
+                basic: {
+                    weekly: 297.00,
+                    biweekly: 397.00,
+                    monthly: 547.00,
+                    quarterly: 497.00,
+                    semiannual: 447.00,
+                    annual: 397.00
+                },
+                standard: {
+                    weekly: 397.00,
+                    biweekly: 597.00,
+                    monthly: 747.00,
+                    quarterly: 697.00,
+                    semiannual: 647.00,
+                    annual: 597.00
+                },
+                premium: {
+                    weekly: 697.00,
+                    biweekly: 997.00,
+                    monthly: 1297.00,
+                    quarterly: 1197.00,
+                    semiannual: 1097.00,
+                    annual: 997.00
+                }
+            },
+            quitandinha: {
+                basic: {
+                    weekly: 198.00,
+                    biweekly: 248.00,
+                    monthly: 398.00,
+                    quarterly: 348.00,
+                    semiannual: 298.00,
+                    annual: 248.00
+                },
+                standard: {
+                    weekly: 348.00,
+                    biweekly: 448.00,
+                    monthly: 598.00,
+                    quarterly: 548.00,
+                    semiannual: 498.00,
+                    annual: 448.00
+                },
+                premium: {
+                    weekly: 498.00,
+                    biweekly: 648.00,
+                    monthly: 798.00,
+                    quarterly: 748.00,
+                    semiannual: 698.00,
+                    annual: 648.00
+                }
+            }
         };
 
-        return `SUPER OPORTUNIDADE NO PLANO PREMIUM! Economize ${formatCurrency(totalSavings)} em ${periodText[selectedPeriod]}! Aproveite ${discount}% de desconto em relação ao plano mensal. Quanto maior o período, maior seu desconto!`;
-    };
+        const locationSelect = document.getElementById('location-select');
+        const billingPeriodSelect = document.getElementById('billing-period');
+        const basicPriceElement = document.getElementById('basic-price');
+        const standardPriceElement = document.getElementById('standard-price');
+        const premiumPriceElement = document.getElementById('premium-price');
+        const savingsMessageElement = document.getElementById('savings-message');
+        const basicDiscountElement = document.getElementById('basic-discount');
+        const standardDiscountElement = document.getElementById('standard-discount');
+        const premiumDiscountElement = document.getElementById('premium-discount');
 
-    const updatePrices = (selectedPeriod) => {
-        basicPriceElement.textContent = formatCurrency(basicPrice[selectedPeriod]);
-        standardPriceElement.textContent = formatCurrency(standardPrice[selectedPeriod]);
-        premiumPriceElement.textContent = formatCurrency(premiumPrice[selectedPeriod]);
+        const formatCurrency = (value) => {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 4
+            }).format(value);
+        };
 
-        if (selectedPeriod !== 'monthly') {
-            const basicDiscount = calculateDiscount(basicPrice.monthly, basicPrice[selectedPeriod]);
-            const standardDiscount = calculateDiscount(standardPrice.monthly, standardPrice[selectedPeriod]);
-            const premiumDiscount = calculateDiscount(premiumPrice.monthly, premiumPrice[selectedPeriod]);
+        const calculateDiscount = (monthlyPrice, currentPrice) => {
+            return Math.round(((monthlyPrice - currentPrice) / monthlyPrice) * 100);
+        };
 
-            basicDiscountElement.textContent = `-${basicDiscount}%`;
-            standardDiscountElement.textContent = `-${standardDiscount}%`;
-            premiumDiscountElement.textContent = `-${premiumDiscount}%`;
-        } else {
-            basicDiscountElement.textContent = '';
-            standardDiscountElement.textContent = '';
-            premiumDiscountElement.textContent = '';
-        }
-        savingsMessageElement.innerHTML = calculatePremiumSavings(selectedPeriod);
-    };
+        const calculatePremiumSavings = (selectedPeriod, selectedLocation) => {
+            if (selectedPeriod === 'weekly' || selectedPeriod === 'biweekly') {
+                return '';
+            }
+            const currentPrices = LOCATIONS_PRICES[selectedLocation];
+            const monthlyPrice = currentPrices.premium.monthly;
+            const selectedPrice = currentPrices.premium[selectedPeriod];
+            const discount = calculateDiscount(monthlyPrice, selectedPrice);
+            const periodMonths = {
+                weekly: 0.25,
+                biweekly: 0.5,
+                monthly: 1,
+                quarterly: 3,
+                semiannual: 6,
+                annual: 12
+            };
 
-    billingPeriodSelect.addEventListener('change', () => {
-        const selectedPeriod = billingPeriodSelect.value;
-        updatePrices(selectedPeriod);
-    });
+            const periodText = {
+                weekly: '7 dias',
+                biweekly: '15 dias',
+                monthly: '1 mês',
+                quarterly: '3 meses',
+                semiannual: '6 meses',
+                annual: '12 meses'
+            };
 
-    updatePrices(billingPeriodSelect.value);
+            const totalSavings = (monthlyPrice - selectedPrice) * periodMonths[selectedPeriod];
+            
+            if (totalSavings <= 0) return '';
 
-    const sendWhatsAppMessage = (plan, period, price) => {
-        const phoneNumber = '+5541999217821';
-        const message = `Olá, eu gostaria de solicitar o plano ${plan} para o período de ${period}. O valor é ${price}.`;
-        const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-    };
+            return `SUPER OPORTUNIDADE NO PLANO PREMIUM! Economize ${formatCurrency(totalSavings)} em ${periodText[selectedPeriod]}! Aproveite ${discount}% de desconto em relação ao plano mensal. Quanto maior o período, maior seu desconto!`;
+        };
 
-    document.getElementById('basic-btn').addEventListener('click', () => {
-        const period = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
-        const price = basicPriceElement.textContent;
-        sendWhatsAppMessage('BASIC', period, price);
-    });
+        const updateSpecs = (selectedLocation) => {
+            const specs = LOCATIONS_SPECS[selectedLocation];
+            const currentPrices = LOCATIONS_PRICES[selectedLocation];
+            const selectedPeriod = billingPeriodSelect.value;
+            
+            ['basic', 'standard', 'premium'].forEach(plan => {
+                document.getElementById(`${plan}-hourly`).textContent = specs[plan].hourly;
+                document.getElementById(`${plan}-daily`).textContent = specs[plan].daily;
+                document.getElementById(`${plan}-monthly`).textContent = specs[plan].monthly;
+                document.getElementById(`${plan}-media`).textContent = specs[plan].media;
+                document.getElementById(`${plan}-duration`).textContent = specs[plan].duration;
+                document.getElementById(`${plan}-interval`).textContent = specs[plan].interval;
+                
+                // Calcula e formata o custo por anúncio
+                const price = currentPrices[plan][selectedPeriod];
+                const costPerAd = specs[plan].costPerAd(price);
+                document.getElementById(`${plan}-costPerAd`).textContent = 
+                    `Custo por Anúncio: ${formatCurrency(costPerAd)}`;
+            });
+        };
 
-    document.getElementById('standard-btn').addEventListener('click', () => {
-        const period = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
-        const price = standardPriceElement.textContent;
-        sendWhatsAppMessage('STANDARD', period, price);
-    });
+        const updatePrices = (selectedPeriod) => {
+            const selectedLocation = locationSelect.value;
+            const currentPrices = LOCATIONS_PRICES[selectedLocation];
 
-    document.getElementById('premium-btn').addEventListener('click', () => {
-        const period = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
-        const price = premiumPriceElement.textContent;
-        sendWhatsAppMessage('PREMIUM', period, price);
-    });
-</script>
+            basicPriceElement.textContent = formatCurrency(currentPrices.basic[selectedPeriod]);
+            standardPriceElement.textContent = formatCurrency(currentPrices.standard[selectedPeriod]);
+            premiumPriceElement.textContent = formatCurrency(currentPrices.premium[selectedPeriod]);
+
+            if (selectedPeriod !== 'monthly' && selectedPeriod !== 'biweekly' && selectedPeriod !== 'weekly') {
+                const basicDiscount = calculateDiscount(currentPrices.basic.monthly, currentPrices.basic[selectedPeriod]);
+                const standardDiscount = calculateDiscount(currentPrices.standard.monthly, currentPrices.standard[selectedPeriod]);
+                const premiumDiscount = calculateDiscount(currentPrices.premium.monthly, currentPrices.premium[selectedPeriod]);
+
+                basicDiscountElement.textContent = `-${basicDiscount}%`;
+                standardDiscountElement.textContent = `-${standardDiscount}%`;
+                premiumDiscountElement.textContent = `-${premiumDiscount}%`;
+            } else {
+                basicDiscountElement.textContent = '';
+                standardDiscountElement.textContent = '';
+                premiumDiscountElement.textContent = '';
+            }
+            savingsMessageElement.innerHTML = calculatePremiumSavings(selectedPeriod, selectedLocation);
+        };
+
+        const sendWhatsAppMessage = (plan, period, price) => {
+            try {
+                if (!plan || !period || !price) {
+                    console.error('Dados inválidos para envio');
+                    return;
+                }
+
+                const selectedLocation = locationSelect.options[locationSelect.selectedIndex].text;
+                const phoneNumber = '+5541999217821';
+                const sanitizedPlan = encodeURIComponent(plan.trim());
+                const sanitizedPeriod = encodeURIComponent(period.trim());
+                const sanitizedPrice = encodeURIComponent(price.trim());
+                const sanitizedLocation = encodeURIComponent(selectedLocation.trim());
+
+                const message = `Olá, eu gostaria de solicitar o plano ${sanitizedPlan} para o período de ${sanitizedPeriod} na unidade ${sanitizedLocation}. O valor é ${sanitizedPrice}.`;
+                const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`;
+                
+                window.open(url, '_blank');
+            } catch (error) {
+                console.error('Erro ao enviar mensagem:', error);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePrices(billingPeriodSelect.value);
+            updateSpecs(locationSelect.value);
+            
+            billingPeriodSelect.addEventListener('change', (e) => {
+                updatePrices(e.target.value);
+                updateSpecs(locationSelect.value);
+            });
+
+            locationSelect.addEventListener('change', () => {
+                updatePrices(billingPeriodSelect.value);
+                updateSpecs(locationSelect.value);
+            });
+
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const planType = e.target.id.split('-')[0].toUpperCase();
+                    const period = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
+                    const price = document.getElementById(`${planType.toLowerCase()}-price`).textContent;
+                    sendWhatsAppMessage(planType, period, price);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
  
