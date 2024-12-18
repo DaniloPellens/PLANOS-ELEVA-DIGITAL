@@ -92,11 +92,15 @@
             outline-offset: 2px;
         }
         .plans-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .plans-container.show {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
-            margin-bottom: 40px;
+            opacity: 1;
+            transform: translateY(0);
         }
         .plan-card {
             flex: 1;
@@ -608,6 +612,196 @@
             .logo {
                 max-width: 700%;
             }
+        }
+
+        /* Estilos do Pop-up de Instruções */
+        .instructions-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .instructions-popup {
+            background: var(--dark-bg);
+            border: 2px solid var(--primary-green);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+
+        .instructions-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: 2px solid var(--primary-green);
+            color: var(--primary-green);
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .instruction-step {
+            opacity: 0;
+            transform: translateY(20px);
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(0, 255, 0, 0.1);
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Estilos para o tutorial passo a passo */
+        .step-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 99999;
+            pointer-events: none;
+        }
+
+        .tutorial-spotlight {
+            position: fixed;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                transparent 30%,
+                rgba(0, 0, 0, 0.95) 70%
+            );
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 100000;
+        }
+
+        .tutorial-message {
+            position: fixed;
+            background: rgba(0, 255, 0, 0.15);
+            border: 2px solid var(--primary-green);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            max-width: 300px;
+            backdrop-filter: blur(5px);
+            animation: float 2s infinite ease-in-out;
+            z-index: 100001;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Garantir que os elementos do tutorial fiquem acima de tudo */
+        .instructions-overlay {
+            z-index: 100002;
+        }
+
+        .instructions-popup {
+            z-index: 100003;
+        }
+
+        /* Adicione esta classe para escurecer os cards */
+        .tutorial-active .plans-container {
+            display: flex !important;
+            opacity: 0.05 !important;
+            pointer-events: none;
+            filter: brightness(0.05) blur(2px);
+            transition: all 0.5s ease;
+        }
+
+        /* Atualize os estilos do tutorial */
+        .tutorial-active .plans-container {
+            display: flex !important;
+            opacity: 0.05 !important;
+            pointer-events: none;
+            filter: brightness(0.05) blur(2px);
+            transition: all 0.5s ease;
+        }
+
+        /* Ajuste os z-index para garantir a sobreposição correta */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100000;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .tutorial-spotlight {
+            position: fixed;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                transparent 30%,
+                rgba(0, 0, 0, 0.95) 70%
+            );
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 100001;
+        }
+
+        .tutorial-message {
+            position: fixed;
+            background: rgba(0, 255, 0, 0.15);
+            border: 2px solid var(--primary-green);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            max-width: 300px;
+            backdrop-filter: blur(5px);
+            animation: float 2s infinite ease-in-out;
+            z-index: 100002;
+        }
+
+        .instructions-overlay {
+            z-index: 100003;
+        }
+
+        .instructions-popup {
+            z-index: 100004;
         }
     </style>
 </head>
@@ -1200,7 +1394,7 @@
         // Adicionar após os outros event listeners
         document.getElementById('whatsapp-float').addEventListener('click', (e) => {
             if (!e.target.classList.contains('whatsapp-close')) {
-                const message = "Olá! Gostaria de saber mais informações sobre os planos de mídia digital. Pode me ajudar? 🙂";
+                const message = "Olá! Gostaria de saber mais informações sobre os planos de mídia digital. Pode me ajudar?";
                 const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_CONFIG.phoneNumber}&text=${encodeURIComponent(message)}`;
                 window.open(url, '_blank');
             }
@@ -1301,6 +1495,142 @@
                 }, 10000);
             }, 100);
         };
+
+        // Sistema de Tutorial
+        class TutorialSystem {
+            constructor() {
+                // Remover tutorial anterior se existir
+                const existingTutorial = document.querySelector('.instructions-overlay');
+                if (existingTutorial) {
+                    existingTutorial.remove();
+                }
+                
+                // Adicionar classe para escurecer os cards
+                document.body.classList.add('tutorial-active');
+                
+                // Mostrar os cards escurecidos
+                const plansContainer = document.querySelector('.plans-container');
+                plansContainer.style.display = 'flex';
+                plansContainer.style.opacity = '0.1';
+                
+                this.showInitialInstructions();
+            }
+
+            showInitialInstructions() {
+                const instructionsHTML = `
+                    <div class="instructions-overlay" id="instructions-overlay">
+                        <div class="instructions-popup">
+                            <button class="instructions-close" onclick="window.tutorial.startStepByStepTutorial()">×</button>
+                            <div class="instructions-content">
+                                <h2 style="color: var(--primary-green); margin-bottom: 20px;">Bem-vindo!</h2>
+                                <div class="instruction-step">
+                                    <h3>Vamos te ajudar a escolher o melhor plano</h3>
+                                    <p>Siga nosso passo a passo para uma escolha personalizada</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', instructionsHTML);
+            }
+
+            startStepByStepTutorial() {
+                const overlay = document.getElementById('instructions-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.remove();
+                        this.showLocationStep();
+                    }, 500);
+                }
+            }
+
+            showLocationStep() {
+                const locationSelect = document.querySelector('#location-select');
+                if (!locationSelect) return;
+
+                const tutorialOverlay = document.createElement('div');
+                tutorialOverlay.className = 'tutorial-overlay';
+                
+                const rect = locationSelect.getBoundingClientRect();
+                
+                tutorialOverlay.innerHTML = `
+                    <div class="tutorial-spotlight" style="
+                        width: ${rect.width + 80}px;
+                        height: ${rect.height + 80}px;
+                        left: ${rect.left - 40}px;
+                        top: ${rect.top - 40}px;
+                    "></div>
+                    <div class="tutorial-message" style="
+                        top: ${rect.bottom + 20}px;
+                        left: ${rect.left}px;
+                    ">
+                        Primeiro, selecione sua unidade aqui 👆
+                    </div>
+                `;
+                
+                document.body.appendChild(tutorialOverlay);
+
+                // Usar mousedown ao invés de change
+                locationSelect.addEventListener('mousedown', () => {
+                    tutorialOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        tutorialOverlay.remove();
+                        // Aguardar 3 segundos antes de mostrar o próximo passo
+                        setTimeout(() => {
+                            this.showPeriodStep();
+                        }, 3000);
+                    }, 500);
+                }, { once: true });
+            }
+
+            showPeriodStep() {
+                const periodSelect = document.querySelector('#billing-period');
+                if (!periodSelect) return;
+                
+                const tutorialOverlay = document.createElement('div');
+                tutorialOverlay.className = 'tutorial-overlay';
+                
+                const rect = periodSelect.getBoundingClientRect();
+                
+                tutorialOverlay.innerHTML = `
+                    <div class="tutorial-spotlight" style="
+                        width: ${rect.width + 80}px;
+                        height: ${rect.height + 80}px;
+                        left: ${rect.left - 40}px;
+                        top: ${rect.top - 40}px;
+                    "></div>
+                    <div class="tutorial-message" style="
+                        top: ${rect.bottom + 20}px;
+                        left: ${rect.left}px;
+                    ">
+                        Agora, escolha o período do contrato 👆
+                    </div>
+                `;
+                
+                document.body.appendChild(tutorialOverlay);
+
+                periodSelect.addEventListener('mousedown', () => {
+                    tutorialOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        tutorialOverlay.remove();
+                        // Remover classe tutorial-active
+                        document.body.classList.remove('tutorial-active');
+                        // Mostrar os cards com animação
+                        const plansContainer = document.querySelector('.plans-container');
+                        plansContainer.style.display = 'flex';
+                        setTimeout(() => {
+                            plansContainer.classList.add('show');
+                        }, 50);
+                    }, 500);
+                }, { once: true });
+            }
+        }
+
+        // Inicializar o tutorial quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            window.tutorial = new TutorialSystem();
+        });
     </script>
 </body>
 </html>
