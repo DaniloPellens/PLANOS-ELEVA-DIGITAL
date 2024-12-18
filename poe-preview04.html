@@ -550,7 +550,7 @@
             text-align: right;
         }
 
-        /* Adicionar estilos para o container do logo */
+        /* Ajustar o container da logo */
         .logo-container {
             margin: 0;
             padding: 0;
@@ -560,6 +560,8 @@
             margin-right: auto;
             margin-left: -60px;
             transform: translateX(-10px);
+            display: flex;
+            align-items: center;
         }
 
         .logo {
@@ -570,28 +572,41 @@
             transform-origin: left center;
         }
 
-        .logo:hover {
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 15px rgba(0, 255, 0, 0.5));
-        }
-
-        /* Ajustes para responsividade */
-        @media (max-width: 1536px) {
-            .logo-container {
-                margin-left: 0;
-                transform: none;
-                margin: 0 auto;
-                max-width: 80px;
-            }
-            
-            .logo {
-                max-width: 300%;
-            }
-            
+        /* Ajustar responsividade */
+        @media (max-width: 768px) {
             .location-selector {
                 flex-direction: column;
                 gap: 15px;
                 padding: 20px;
+            }
+
+            .logo-container {
+                margin: 0 auto 20px;
+                transform: none;
+                max-width: 150px;
+                width: 100%;
+                justify-content: center;
+                order: -1; /* Move para o topo apenas em mobile */
+            }
+            
+            .logo {
+                max-width: 600%;
+            }
+
+            /* Ajustar outros elementos para acomodar a logo */
+            .location-selector > div:not(.logo-container) {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-container {
+                max-width: 120px;
+            }
+            
+            .logo {
+                max-width: 700%;
             }
         }
     </style>
