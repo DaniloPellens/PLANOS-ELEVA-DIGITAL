@@ -39,12 +39,16 @@
             padding: 15px;
             background-color: rgba(0, 255, 0, 0.1);
             border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: nowrap;
         }
         .location-selector label {
-            color: var(--primary-green);
-            font-size: 18px;
-            margin-right: 15px;
-            font-weight: bold;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
         }
         .location-selector select {
             padding: 10px 20px;
@@ -63,12 +67,12 @@
         .pricing-header {
             text-align: center;
             color: var(--primary-green);
-            margin-bottom: 30px;
+            margin-bottom: 50px;
             text-shadow: 0 0 10px rgba(0,255,0,0.5);
         }
         .billing-period {
-            text-align: center;
-            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
         }
         .billing-period label {
             color: white;
@@ -103,11 +107,21 @@
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             text-align: center;
-            transition: var(--transition-default);
-            transform: scale(1.05);
+            transition: var(--transition-default), outline-color 0s;
+            transform: scale(1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1;
         }
         .plan-card:hover {
             transform: scale(1.08);
+            z-index: 3;
+        }
+        .plan-card-last-hover {
+            outline: 3px solid var(--primary-green);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            z-index: 2;
         }
         .basic {
             background: linear-gradient(135deg, var(--card-red), #660000);
@@ -117,9 +131,47 @@
             background: linear-gradient(135deg, var(--card-purple), #4B0082);
             box-shadow: 0 8px 25px rgba(153,50,204,0.3);
         }
+        .standard::before {
+            content: "MAIS POPULAR";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FFD700;
+            color: var(--dark-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+            z-index: 2;
+        }
         .premium {
             background: linear-gradient(135deg, var(--card-blue), #000066);
-            box-shadow: 0 8px 25px rgba(0,102,204,0.3);
+            box-shadow: 0 8px 30px rgba(0,102,204,0.5);
+            position: relative;
+            z-index: 2;
+        }
+        .premium::before {
+            content: "MELHOR CUSTO-BENEFÍCIO";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FFD700;
+            color: var(--dark-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+            z-index: 2;
+            animation: glowLabel 2s infinite;
+        }
+        @keyframes glowLabel {
+            0% { box-shadow: 0 0 5px var(--primary-green); }
+            50% { box-shadow: 0 0 20px var(--primary-green); }
+            100% { box-shadow: 0 0 5px var(--primary-green); }
         }
         .discount-triangle {
             position: absolute;
@@ -132,6 +184,7 @@
             border-color: var(--primary-green) transparent transparent transparent;
             opacity: 0;
             animation: blinkSequence 6s infinite;
+            display: none;
         }
         .basic .discount-triangle { animation-delay: 0s; }
         .standard .discount-triangle { animation-delay: 2s; }
@@ -227,7 +280,8 @@
             background-color: rgba(0, 255, 0, 0.1);
             border-radius: 5px;
             border: 2px solid var(--primary-green);
-            max-width: 800px;
+            width: calc(350px * 3 + 80px);
+            max-width: 100%;
             white-space: normal;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -238,6 +292,14 @@
             100% { border-color: var(--primary-green); }
         }
         @media (max-width: 768px) {
+            .location-selector {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .billing-period {
+                width: 100%;
+                justify-content: center;
+            }
             .plans-container {
                 flex-direction: column;
                 align-items: center;
@@ -250,36 +312,320 @@
             }
             .plan-card:hover {
                 transform: scale(1.03);
+                outline: 3px solid var(--primary-green);
+                box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+                z-index: 3;
             }
             .savings-message {
                 white-space: normal;
+            }
+            .plan-card-last-hover {
+                transform: scale(1.03);
+            }
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--dark-bg), #000066);
+            border: 2px solid var(--primary-green);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 600px;
+            width: 90%;
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            z-index: 1001;
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--primary-green);
+        }
+        .popup-title {
+            color: var(--primary-green);
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .popup-close {
+            background: var(--primary-green);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition-default);
+        }
+        .popup-close:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+        .popup-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .plan-comparison {
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .plan-comparison h3 {
+            color: var(--primary-green);
+            margin-bottom: 10px;
+        }
+        .plan-comparison p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        .plan-period {
+            color: white;
+            font-size: 28px;
+            margin-top: -15px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        .show-discount .discount-triangle {
+            display: block;
+        }
+        /* Adicionar estilo para o botão de exportação */
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .export-btn {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--primary-green);
+            color: var(--primary-green);
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #25D366;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.3);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+        }
+
+        .whatsapp-float img {
+            width: 28px;
+            height: 28px;
+            filter: brightness(1.1);
+        }
+
+        .whatsapp-close {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #fff;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #25D366;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        /* Estilizar o balão de mensagem do WhatsApp */
+        .whatsapp-bubble {
+            position: fixed;
+            bottom: 90px;
+            right: 90px;
+            background: #DCF8C6; /* Cor típica das mensagens do WhatsApp */
+            padding: 12px 15px;
+            border-radius: 12px;
+            max-width: 280px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+            font-size: 14px;
+            color: #303030;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 99;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .whatsapp-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: 15px;
+            right: -8px;
+            width: 15px;
+            height: 15px;
+            background: #DCF8C6;
+            transform: rotate(45deg);
+        }
+
+        .whatsapp-bubble.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .typing-animation {
+            display: inline-block;
+            white-space: pre-wrap;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .typing-letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(8px);
+            animation: typingLetter 0.05s ease forwards;
+        }
+
+        @keyframes typingLetter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Adicionar estilo para o timestamp */
+        .whatsapp-timestamp {
+            font-size: 11px;
+            color: #667781;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        /* Adicionar estilos para o container do logo */
+        .logo-container {
+            margin: 0;
+            padding: 0;
+            background: none;
+            max-width: 100px;
+            flex-shrink: 0;
+            margin-right: auto;
+            margin-left: -60px;
+            transform: translateX(-10px);
+        }
+
+        .logo {
+            max-width: 300%;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
+            transition: all 0.3s ease;
+            transform-origin: left center;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 15px rgba(0, 255, 0, 0.5));
+        }
+
+        /* Ajustes para responsividade */
+        @media (max-width: 1536px) {
+            .logo-container {
+                margin-left: 0;
+                transform: none;
+                margin: 0 auto;
+                max-width: 80px;
+            }
+            
+            .logo {
+                max-width: 300%;
+            }
+            
+            .location-selector {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="whatsapp-bubble" style="display: none;">
+        <span class="typing-animation"></span>
+    </div>
     <main class="container">
         <div class="location-selector">
-            <label for="location-select">Selecione a Unidade:</label>
-            <select id="location-select" aria-label="Selecione a unidade">
-                <option value="riogrande">Fazenda Rio Grande PR</option>
-                <option value="quitandinha">Quitandinha PR</option>
-            </select>
+            <div class="logo-container">
+                <img src="https://i.ibb.co/qFZdPhf/DIGITAL-MIDIA-pequeno.png" alt="Digital Mídia" class="logo">
+            </div>
+            <div>
+                <label for="location-select">Selecione a Unidade:</label>
+                <select id="location-select" aria-label="Selecione a unidade">
+                    <option value="riogrande">Fazenda Rio Grande PR</option>
+                    <option value="quitandinha">Quitandinha PR</option>
+                </select>
+            </div>
+            <div class="billing-period">
+                <label for="billing-period" class="billing-label">Período de Contrato:</label>
+                <select id="billing-period" aria-label="Selecione o período de contrato">
+                    <option value="annual">1 Ano</option>
+                    <option value="semiannual">6 Meses</option>
+                    <option value="quarterly">3 Meses</option>
+                    <option value="monthly">1 Mês</option>
+                    <option value="biweekly">15 Dias</option>
+                    <option value="weekly">7 Dias</option>
+                </select>
+            </div>
         </div>
 
         <h1 class="pricing-header">Escolha seu Plano</h1>
-
-        <div class="billing-period">
-            <label for="billing-period" class="billing-label">Período de Contrato:</label>
-            <select id="billing-period" aria-label="Selecione o período de contrato">
-                <option value="annual">1 Ano</option>
-                <option value="semiannual">6 Meses</option>
-                <option value="quarterly">3 Meses</option>
-                <option value="monthly">1 Mês</option>
-                <option value="biweekly">15 Dias</option>
-                <option value="weekly">7 Dias</option>
-            </select>
-        </div>
 
         <div class="plans-container" role="group" aria-label="Opções de planos">
             <article class="plan-card basic" role="article" aria-labelledby="basic-title">
@@ -288,6 +634,7 @@
                 </div>
                 <div class="plan-header">
                     <h2 class="plan-title" id="basic-title">BASIC</h2>
+                    <div class="plan-period" id="basic-plan-period"></div>
                     <div class="plan-price" id="basic-price" aria-label="Preço do plano basic">R$ 397,00</div>
                     <div class="price-period">/mês</div>
                 </div>
@@ -309,6 +656,7 @@
                 </div>
                 <div class="plan-header">
                     <h2 class="plan-title" id="standard-title">STANDARD</h2>
+                    <div class="plan-period" id="standard-plan-period"></div>
                     <div class="plan-price" id="standard-price" aria-label="Preço do plano standard">R$ 597,00</div>
                     <div class="price-period">/mês</div>
                 </div>
@@ -330,6 +678,7 @@
                 </div>
                 <div class="plan-header">
                     <h2 class="plan-title" id="premium-title">PREMIUM</h2>
+                    <div class="plan-period" id="premium-plan-period"></div>
                     <div class="plan-price" id="premium-price" aria-label="Preço do plano premium">R$ 997,00</div>
                     <div class="price-period">/mês</div>
                 </div>
@@ -348,7 +697,54 @@
         <div class="savings-message" id="savings-message" role="alert" aria-live="polite"></div>
     </main>
 
+    <div class="popup-overlay" id="popup-overlay">
+        <div class="popup">
+            <div class="popup-header">
+                <div class="popup-title">Comparação dos Planos</div>
+                <button class="popup-close" id="popup-close">×</button>
+            </div>
+            <div class="popup-content" id="popup-content">
+                <!-- Conteúdo será preenchido dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="export-btn" id="export-btn">📸 Exportar Tela</button>
+    </div>
+
+    <div class="whatsapp-float" id="whatsapp-float">
+        <div class="whatsapp-close" id="whatsapp-close">×</div>
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMzgwLjkgOTcuMUMzMzkgNTUuMiAyODMuMiAzMiAyMjQgMzJjLTEyMi40IDAtMjIyIDk5LjYtMjIyIDIyMiAwIDM5LjEgMTAuMiA3Ny4zIDI5LjYgMTExTDAgNDgwbDExNy43LTMwLjljMzIuNCAxNy43IDY4LjkgMjcgMTA2LjEgMjdoLjFjMTIyLjMgMCAyMjQtOTkuNiAyMjQtMjIyIDAtNTkuMy0yNS4yLTExNS4xLTY3LTE1N3pNMjI0IDQzOC43Yy0zMy4yIDAtNjUuNy04LjktOTQtMjUuN2wtNi43LTQtNjkuOCAxOC4zTDcyIDM1OWwtNC4zLTYuOWMtMTguNS0yOS40LTI4LjItNjMuMy0yOC4yLTk4LjIgMC0xMDEuNyA4Mi44LTE4NC41IDE4NC42LTE4NC41IDQ5LjMgMCA5NS42IDE5LjIgMTMwLjQgNTQuMSAzNC44IDM0LjkgNTQuMCA4MS4yIDU0IDEzMC40IDAgMTAxLjgtODIuOSAxODQuOC0xODQuNSAxODQuOHptMTAxLjItMTM4LjJjLTUuNS0yLjgtMzIuOC0xNi4yLTM3LjktMTgtNS4xLTEuOS05LTIuOC0xMi45IDIuOC0zLjggNS42LTE0LjkgMTgtMTguMiAyMS44LTMuMyAzLjctNi43IDQuMi0xMi4yIDEuNC0zMi42LTE2LjMtNTQtMjkuMS03NS41LTY2LTUuNy05LjggNS43LTkuMSAxNi4zLTMwLjMgMS44LTMuNy45LTYuOS0uNS05LjctMS40LTIuOC0xMi41LTMwLjEtMTcuMS00MS4yLTQuNS0xMC45LTkuMS05LjMtMTIuNS05LjUtMy4yLS4yLTYuOS0uMi0xMC42LS4yLTMuNyAwLTkuNyAxLjQtMTQuOCA2LjktNS4xIDUuNi0xOS40IDE5LTE5LjQgNDYuMyAwIDI3LjMgMTkuOSA1My43IDIyLjYgNTcuNCAyLjggMy43IDM5LjEgNTkuNyA5NC44IDgzLjggMzUuMiAxNS4yIDQ5IDE2LjUgNjYuNiAxMy45IDEwLjctMS42IDMyLjgtMTMuNCAzNy40LTI2LjQgNC42LTEzIDQuNi0yNC4xIDMuMi0yNi40LTEuMy0yLjUtNS0zLjktMTAuNS02LjZ6Ii8+PC9zdmc+" alt="WhatsApp" style="width: 28px; height: 28px;">
+    </div>
+
+    <audio id="notification-sound" preload="auto">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
+        const calculateInsertions = (monthlyInsertions, selectedPeriod) => {
+            if (selectedPeriod === 'weekly' || selectedPeriod === 'biweekly') {
+                const daysInPeriod = {
+                    weekly: 7,
+                    biweekly: 15,
+                    monthly: 30
+                };
+                const ratio = daysInPeriod[selectedPeriod] / 30;
+                return Math.round(monthlyInsertions * ratio);
+            }
+            return monthlyInsertions;
+        };
+
+        const formatPeriodText = (selectedPeriod) => {
+            if (selectedPeriod === 'weekly' || selectedPeriod === 'biweekly') {
+                const periodTexts = {
+                    weekly: '/7 dias',
+                    biweekly: '/15 dias'
+                };
+                return periodTexts[selectedPeriod];
+            }
+            return '/mês';
+        };
+
         const LOCATIONS_SPECS = {
             riogrande: {
                 basic: {
@@ -358,8 +754,10 @@
                     media: "1 mídia",
                     duration: "Duração 10 Segundos",
                     interval: "Intervalo 12 minutos",
-                    costPerAd: function(price) {
-                        return price / 2550;
+                    baseInsertions: 2550,
+                    costPerAd: function(price, selectedPeriod) {
+                        const periodInsertions = calculateInsertions(this.baseInsertions, selectedPeriod);
+                        return price / periodInsertions;
                     }
                 },
                 standard: {
@@ -369,19 +767,23 @@
                     media: "2 mídias Alternadas",
                     duration: "Duração 10 Segundos",
                     interval: "Intervalo 6 minutos",
-                    costPerAd: function(price) {
-                        return price / 5100;
+                    baseInsertions: 5100,
+                    costPerAd: function(price, selectedPeriod) {
+                        const periodInsertions = calculateInsertions(this.baseInsertions, selectedPeriod);
+                        return price / periodInsertions;
                     }
                 },
                 premium: {
-                    hourly: "20 inserções por hora",
+                    hourly: "20 inser��ões por hora",
                     daily: "340 inserções por dia",
                     monthly: "10.200 inserções/mês",
                     media: "4 mídias Alternadas",
                     duration: "Duração 10 Segundos",
                     interval: "Intervalo 3 minutos",
-                    costPerAd: function(price) {
-                        return price / 10200;
+                    baseInsertions: 10200,
+                    costPerAd: function(price, selectedPeriod) {
+                        const periodInsertions = calculateInsertions(this.baseInsertions, selectedPeriod);
+                        return price / periodInsertions;
                     }
                 }
             },
@@ -393,8 +795,10 @@
                     media: "1 mídia",
                     duration: "Duração 10 Segundos",
                     interval: "Intervalo 12 minutos",
-                    costPerAd: function(price) {
-                        return price / 2400;
+                    baseInsertions: 2400,
+                    costPerAd: function(price, selectedPeriod) {
+                        const periodInsertions = calculateInsertions(this.baseInsertions, selectedPeriod);
+                        return price / periodInsertions;
                     }
                 },
                 standard: {
@@ -404,8 +808,10 @@
                     media: "2 mídias Alternadas",
                     duration: "Duração 10 Segundos",
                     interval: "Intervalo 6 minutos",
-                    costPerAd: function(price) {
-                        return price / 4800;
+                    baseInsertions: 4800,
+                    costPerAd: function(price, selectedPeriod) {
+                        const periodInsertions = calculateInsertions(this.baseInsertions, selectedPeriod);
+                        return price / periodInsertions;
                     }
                 },
                 premium: {
@@ -415,8 +821,10 @@
                     media: "4 mídias Alternadas",
                     duration: "Duração 10 Segundos",
                     interval: "Intervalo 3 minutos",
-                    costPerAd: function(price) {
-                        return price / 9600;
+                    baseInsertions: 9600,
+                    costPerAd: function(price, selectedPeriod) {
+                        const periodInsertions = calculateInsertions(this.baseInsertions, selectedPeriod);
+                        return price / periodInsertions;
                     }
                 }
             }
@@ -477,6 +885,10 @@
             }
         };
 
+        const WHATSAPP_CONFIG = {
+            phoneNumber: '+5541999217821'
+        };
+
         const locationSelect = document.getElementById('location-select');
         const billingPeriodSelect = document.getElementById('billing-period');
         const basicPriceElement = document.getElementById('basic-price');
@@ -492,7 +904,7 @@
                 style: 'currency',
                 currency: 'BRL',
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 4
+                maximumFractionDigits: 2
             }).format(value);
         };
 
@@ -501,36 +913,65 @@
         };
 
         const calculatePremiumSavings = (selectedPeriod, selectedLocation) => {
-            if (selectedPeriod === 'weekly' || selectedPeriod === 'biweekly') {
-                return '';
-            }
             const currentPrices = LOCATIONS_PRICES[selectedLocation];
             const monthlyPrice = currentPrices.premium.monthly;
             const selectedPrice = currentPrices.premium[selectedPeriod];
             const discount = calculateDiscount(monthlyPrice, selectedPrice);
-            const periodMonths = {
-                weekly: 0.25,
-                biweekly: 0.5,
-                monthly: 1,
-                quarterly: 3,
-                semiannual: 6,
-                annual: 12
-            };
+            
+            if (selectedPeriod === 'monthly') {
+                return `🎯 PLANO PREMIUM - MÁXIMO IMPACTO GARANTIDO! 
+                        ⚡ 4x mais exposição que o plano Basic
+                        🔄 Intervalo reduzido para apenas 3 minutos entre anúncios
+                        💫 4 mídias alternadas para maior engajamento
+                        💡 DICA ESPECIAL: Aumente o período para 3, 6 ou 12 meses e ganhe descontos de até ${calculateDiscount(monthlyPrice, currentPrices.premium.annual)}%!`;
+            }
+            
+            if (selectedPeriod === 'weekly' || selectedPeriod === 'biweekly') {
+                return `🌟 EXPERIMENTE O PODER DO PLANO PREMIUM! 
+                        Com 4x mais exposição que o plano Basic, seu negócio terá máximo impacto desde o primeiro dia.
+                        Após ver os resultados impressionantes, aproveite descontos especiais nos planos de longa duração!
+                        ✨ Maior visibilidade com o menor intervalo entre anúncios!`;
+            }
 
             const periodText = {
-                weekly: '7 dias',
-                biweekly: '15 dias',
-                monthly: '1 mês',
                 quarterly: '3 meses',
                 semiannual: '6 meses',
                 annual: '12 meses'
             };
 
+            const periodMonths = {
+                quarterly: 3,
+                semiannual: 6,
+                annual: 12
+            };
+
             const totalSavings = (monthlyPrice - selectedPrice) * periodMonths[selectedPeriod];
             
-            if (totalSavings <= 0) return '';
+            let message = `🔥 SUPER OPORTUNIDADE NO PLANO PREMIUM! 
+                          💰 Economize ${formatCurrency(totalSavings)} em ${periodText[selectedPeriod]}!
+                          ✨ ${discount}% de desconto em relação ao plano mensal!`;
 
-            return `SUPER OPORTUNIDADE NO PLANO PREMIUM! Economize ${formatCurrency(totalSavings)} em ${periodText[selectedPeriod]}! Aproveite ${discount}% de desconto em relação ao plano mensal. Quanto maior o período, maior seu desconto!`;
+            switch(selectedPeriod) {
+                case 'annual':
+                    message += `\n��� MELHOR CUSTO-BENEFÍCIO DO MERCADO! 
+                               Máxima economia + 4x mais exposição com intervalo reduzido entre anúncios!
+                               Garanta o menor preço por inserção e domine sua região por 12 meses!`;
+                    break;
+                case 'semiannual':
+                    message += `\n💎 EXCELENTE ESCOLHA! 
+                               6 meses de domínio regional com economia garantida.
+                               Considere o plano anual para maximizar sua economia e exposição!
+                               4x mais inserções que o plano Basic!`;
+                    break;
+                case 'quarterly':
+                    message += `\n🚀 ÓTIMA ESCOLHA! 
+                               3 meses de resultados consistentes com desconto especial.
+                               Que tal aumentar para 6 ou 12 meses e economizar ainda mais?
+                               Máxima visibilidade com intervalo reduzido entre anúncios!`;
+                    break;
+            }
+
+            return message;
         };
 
         const updateSpecs = (selectedLocation) => {
@@ -539,16 +980,22 @@
             const selectedPeriod = billingPeriodSelect.value;
             
             ['basic', 'standard', 'premium'].forEach(plan => {
+                const isShortPeriod = selectedPeriod === 'weekly' || selectedPeriod === 'biweekly';
+                const periodInsertions = calculateInsertions(specs[plan].baseInsertions, selectedPeriod);
+                const periodText = formatPeriodText(selectedPeriod);
+                
                 document.getElementById(`${plan}-hourly`).textContent = specs[plan].hourly;
                 document.getElementById(`${plan}-daily`).textContent = specs[plan].daily;
-                document.getElementById(`${plan}-monthly`).textContent = specs[plan].monthly;
+                document.getElementById(`${plan}-monthly`).textContent = 
+                    isShortPeriod ? `${periodInsertions} inserções${periodText}` : specs[plan].monthly;
                 document.getElementById(`${plan}-media`).textContent = specs[plan].media;
                 document.getElementById(`${plan}-duration`).textContent = specs[plan].duration;
                 document.getElementById(`${plan}-interval`).textContent = specs[plan].interval;
                 
-                // Calcula e formata o custo por anúncio
                 const price = currentPrices[plan][selectedPeriod];
-                const costPerAd = specs[plan].costPerAd(price);
+                const costPerAd = isShortPeriod ? 
+                    specs[plan].costPerAd(price, selectedPeriod) : 
+                    specs[plan].costPerAd(price, 'monthly');
                 document.getElementById(`${plan}-costPerAd`).textContent = 
                     `Custo por Anúncio: ${formatCurrency(costPerAd)}`;
             });
@@ -557,10 +1004,15 @@
         const updatePrices = (selectedPeriod) => {
             const selectedLocation = locationSelect.value;
             const currentPrices = LOCATIONS_PRICES[selectedLocation];
+            const periodText = formatPeriodText(selectedPeriod);
 
             basicPriceElement.textContent = formatCurrency(currentPrices.basic[selectedPeriod]);
             standardPriceElement.textContent = formatCurrency(currentPrices.standard[selectedPeriod]);
             premiumPriceElement.textContent = formatCurrency(currentPrices.premium[selectedPeriod]);
+
+            document.querySelectorAll('.price-period').forEach(el => {
+                el.textContent = periodText;
+            });
 
             if (selectedPeriod !== 'monthly' && selectedPeriod !== 'biweekly' && selectedPeriod !== 'weekly') {
                 const basicDiscount = calculateDiscount(currentPrices.basic.monthly, currentPrices.basic[selectedPeriod]);
@@ -576,6 +1028,63 @@
                 premiumDiscountElement.textContent = '';
             }
             savingsMessageElement.innerHTML = calculatePremiumSavings(selectedPeriod, selectedLocation);
+
+            const periodDisplayText = {
+                weekly: '7 Dias',
+                biweekly: '15 Dias',
+                monthly: '1 Mês',
+                quarterly: '3 Meses',
+                semiannual: '6 Meses',
+                annual: '1 Ano'
+            };
+
+            document.querySelectorAll('[id$="-plan-period"]').forEach(el => {
+                el.textContent = periodDisplayText[selectedPeriod];
+            });
+
+            const showDiscount = !['monthly', 'biweekly', 'weekly'].includes(selectedPeriod);
+            document.querySelectorAll('.plan-card').forEach(card => {
+                if (showDiscount) {
+                    card.classList.add('show-discount');
+                } else {
+                    card.classList.remove('show-discount');
+                }
+            });
+        };
+
+        const showComparison = (selectedPeriod, selectedLocation) => {
+            const specs = LOCATIONS_SPECS[selectedLocation];
+            const prices = LOCATIONS_PRICES[selectedLocation];
+            const overlay = document.getElementById('popup-overlay');
+            const content = document.getElementById('popup-content');
+            const isShortPeriod = selectedPeriod === 'weekly' || selectedPeriod === 'biweekly';
+            
+            let comparisons = ['basic', 'standard', 'premium'].map(plan => {
+                const price = prices[plan][selectedPeriod];
+                const insertions = isShortPeriod ? 
+                    calculateInsertions(specs[plan].baseInsertions, selectedPeriod) : 
+                    specs[plan].baseInsertions;
+                const costPerAd = price / insertions;
+                
+                let multiplier = plan === 'premium' ? '4x' : plan === 'standard' ? '2x' : '1x';
+                
+                return `
+                    <div class="plan-comparison">
+                        <h3>${plan.toUpperCase()}</h3>
+                        <p>✨ ${multiplier} exposição</p>
+                        <p>📊 ${insertions} inserções${isShortPeriod ? formatPeriodText(selectedPeriod) : '/mês'}</p>
+                        <p>💰 ${formatCurrency(costPerAd)}/anúncio</p>
+                        <p>⏱️ Intervalo ${specs[plan].interval.split(' ')[1]} minutos</p>
+                    </div>
+                `;
+            }).join('');
+            
+            content.innerHTML = comparisons;
+            overlay.style.display = 'block';
+            
+            document.getElementById('popup-close').onclick = () => {
+                overlay.style.display = 'none';
+            };
         };
 
         const sendWhatsAppMessage = (plan, period, price) => {
@@ -586,7 +1095,7 @@
                 }
 
                 const selectedLocation = locationSelect.options[locationSelect.selectedIndex].text;
-                const phoneNumber = '+5541999217821';
+                const phoneNumber = WHATSAPP_CONFIG.phoneNumber;
                 const sanitizedPlan = encodeURIComponent(plan.trim());
                 const sanitizedPeriod = encodeURIComponent(period.trim());
                 const sanitizedPrice = encodeURIComponent(price.trim());
@@ -608,6 +1117,7 @@
             billingPeriodSelect.addEventListener('change', (e) => {
                 updatePrices(e.target.value);
                 updateSpecs(locationSelect.value);
+                showComparison(e.target.value, locationSelect.value);
             });
 
             locationSelect.addEventListener('change', () => {
@@ -624,6 +1134,158 @@
                 });
             });
         });
+
+        document.querySelectorAll('.plan-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                document.querySelector('.plan-card-last-hover')?.classList.remove('plan-card-last-hover');
+                card.classList.add('plan-card-last-hover');
+            });
+        });
+
+        // Otimizar função de exportação PNG
+        document.getElementById('export-btn').addEventListener('click', () => {
+            const container = document.querySelector('.container');
+            
+            // Esconder botões temporariamente
+            const actionButtons = document.querySelector('.action-buttons');
+            const whatsappFloat = document.querySelector('.whatsapp-float');
+            actionButtons.style.display = 'none';
+            whatsappFloat.style.display = 'none';
+            
+            html2canvas(container, {
+                backgroundColor: '#121212',
+                scale: 1.5,
+                useCORS: true,
+                logging: false,
+                imageTimeout: 2000,
+                removeContainer: true,
+                width: container.offsetWidth,
+                height: container.offsetHeight,
+                allowTaint: true,
+                foreignObjectRendering: true
+            }).then(canvas => {
+                // Restaurar botões
+                actionButtons.style.display = 'block';
+                whatsappFloat.style.display = 'flex';
+                
+                const selectedLocation = locationSelect.options[locationSelect.selectedIndex].text.split(' ')[0];
+                const selectedPeriod = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
+                const currentDate = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+                
+                // Comprimir imagem com qualidade otimizada
+                const compressedImage = canvas.toDataURL('image/png', 0.85); // 85% de qualidade
+                
+                const link = document.createElement('a');
+                link.download = `planos-midia_${selectedLocation}_${selectedPeriod}_${currentDate}.png`;
+                link.href = compressedImage;
+                link.click();
+            });
+        });
+
+        // Adicionar após os outros event listeners
+        document.getElementById('whatsapp-float').addEventListener('click', (e) => {
+            if (!e.target.classList.contains('whatsapp-close')) {
+                const message = "Olá! Gostaria de saber mais informações sobre os planos de mídia digital. Pode me ajudar? 🙂";
+                const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_CONFIG.phoneNumber}&text=${encodeURIComponent(message)}`;
+                window.open(url, '_blank');
+            }
+        });
+
+        // Adicionar variável para controlar o estado do pop-up
+        let whatsappBubbleEnabled = true;
+
+        // Atualizar o event listener do botão de fechar
+        document.getElementById('whatsapp-close').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('whatsapp-float').style.display = 'none';
+            // Desabilitar as mensagens quando fechar
+            whatsappBubbleEnabled = false;
+            // Limpar o intervalo existente
+            clearInterval(window.whatsappInterval);
+            // Remover qualquer bolha existente
+            const existingBubble = document.querySelector('.whatsapp-bubble');
+            if (existingBubble) {
+                existingBubble.remove();
+            }
+        });
+
+        // Modificar a função de inicialização do bubble
+        const initWhatsAppBubble = () => {
+            if (!whatsappBubbleEnabled) return;
+            
+            showWhatsAppBubble();
+            // Limpar intervalos antigos antes de criar novos
+            if (window.whatsappInterval) {
+                clearInterval(window.whatsappInterval);
+            }
+            window.whatsappInterval = setInterval(() => {
+                if (whatsappBubbleEnabled) {
+                    showWhatsAppBubble();
+                }
+            }, 20000);
+        };
+
+        // Atualizar a chamada inicial
+        setTimeout(initWhatsAppBubble, 2000);
+
+        // Adicionar função para animação do balão de mensagem
+        const showWhatsAppBubble = () => {
+            const bubble = document.createElement('div');
+            bubble.className = 'whatsapp-bubble';
+            document.body.appendChild(bubble);
+
+            const currentTime = new Date().toLocaleTimeString('pt-BR', { 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+
+            const messages = [
+                'Olá!',
+                'Posso ajudar?',
+                'Clique aqui ⤵️'
+            ];
+
+            const typingContainer = document.createElement('span');
+            typingContainer.className = 'typing-animation';
+            bubble.appendChild(typingContainer);
+
+            const timestamp = document.createElement('div');
+            timestamp.className = 'whatsapp-timestamp';
+            timestamp.innerHTML = `${currentTime} <span style="color: #34B7F1">✓✓</span>`;
+            bubble.appendChild(timestamp);
+
+            // Função para animar cada letra
+            const animateText = async (text, lineDelay = 500) => {
+                const line = document.createElement('div');
+                line.style.marginBottom = '4px';
+                typingContainer.appendChild(line);
+                
+                await new Promise(resolve => setTimeout(resolve, lineDelay));
+                
+                for (let i = 0; i < text.length; i++) {
+                    const letter = document.createElement('span');
+                    letter.className = 'typing-letter';
+                    letter.textContent = text[i];
+                    line.appendChild(letter);
+                    await new Promise(resolve => setTimeout(resolve, 30));
+                }
+            };
+
+            setTimeout(() => {
+                bubble.classList.add('show');
+                
+                (async () => {
+                    for (let i = 0; i < messages.length; i++) {
+                        await animateText(messages[i], i === 0 ? 100 : 500);
+                    }
+                })();
+
+                setTimeout(() => {
+                    bubble.classList.remove('show');
+                    setTimeout(() => bubble.remove(), 10000);
+                }, 10000);
+            }, 100);
+        };
     </script>
 </body>
 </html>
