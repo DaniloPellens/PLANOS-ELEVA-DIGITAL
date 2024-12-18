@@ -364,6 +364,8 @@
             color: white;
             box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
             z-index: 1001;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .popup-header {
             display: flex;
@@ -461,8 +463,9 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            animation: pulse 2s infinite;
             cursor: pointer;
+            animation: pulse 2s infinite ease-in-out, fadeInOut 3s infinite ease-in-out;
+            opacity: 1;
         }
 
         .whatsapp-float img {
@@ -493,7 +496,7 @@
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
             }
-            70% {
+            50% {
                 transform: scale(1.1);
                 box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
             }
@@ -501,6 +504,23 @@
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
             }
+        }
+
+        /* Adicionar animação de fade */
+        @keyframes fadeInOut {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* Adicionar transição suave ao fechar */
+        .whatsapp-float.hiding {
+            animation: fadeOut 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
 
         /* Estilizar o balão de mensagem do WhatsApp */
@@ -764,6 +784,98 @@
                 transition: none !important;
                 animation: none !important;
             }
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 768px) {
+            .popup {
+                width: 95%;
+                padding: 15px;
+                top: 50%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .popup-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .popup-header {
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+
+            .popup-title {
+                font-size: 20px;
+            }
+
+            .plan-comparison {
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+
+            .plan-comparison h3 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+            .plan-comparison p {
+                font-size: 14px;
+                margin: 8px 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .popup-close {
+                width: 30px;
+                height: 30px;
+                font-size: 20px;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* Ajustes para telas muito pequenas */
+        @media (max-width: 480px) {
+            .popup {
+                width: 98%;
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .popup-title {
+                font-size: 18px;
+            }
+
+            .plan-comparison {
+                padding: 12px;
+            }
+
+            .plan-comparison h3 {
+                font-size: 18px;
+            }
+
+            .plan-comparison p {
+                font-size: 13px;
+                margin: 6px 0;
+            }
+        }
+
+        /* Melhorar a rolagem em dispositivos móveis */
+        .popup::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .popup::-webkit-scrollbar-track {
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .popup::-webkit-scrollbar-thumb {
+            background: var(--primary-green);
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -1419,7 +1531,14 @@
         // Atualizar o event listener do botão de fechar
         document.getElementById('whatsapp-close').addEventListener('click', (e) => {
             e.stopPropagation();
-            document.getElementById('whatsapp-float').style.display = 'none';
+            const whatsappFloat = document.getElementById('whatsapp-float');
+            whatsappFloat.classList.add('hiding');
+            
+            setTimeout(() => {
+                whatsappFloat.style.display = 'none';
+                whatsappFloat.classList.remove('hiding');
+            }, 500);
+            
             // Desabilitar as mensagens quando fechar
             whatsappBubbleEnabled = false;
             // Limpar o intervalo existente
@@ -1464,7 +1583,7 @@
             const messages = [
                 'Olá!',
                 'Posso ajudar?',
-                'Clique aqui ⤵️'
+                'Clique aqui ⤵'
             ];
 
             const typingContainer = document.createElement('span');
