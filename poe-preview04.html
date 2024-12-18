@@ -92,15 +92,11 @@
             outline-offset: 2px;
         }
         .plans-container {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .plans-container.show {
             display: flex;
-            opacity: 1;
-            transform: translateY(0);
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
         }
         .plan-card {
             flex: 1;
@@ -693,17 +689,11 @@
 
         .tutorial-spotlight {
             position: fixed;
-            background: radial-gradient(
-                circle at center,
-                transparent 0%,
-                transparent 30%,
-                rgba(0, 0, 0, 0.95) 70%
-            );
+            background: radial-gradient(circle at center, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.95) 70%);
             transition: all 0.3s ease;
             border-radius: 5px;
             box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.95);
             pointer-events: none;
-            z-index: 100000;
         }
 
         .tutorial-message {
@@ -718,90 +708,12 @@
             max-width: 300px;
             backdrop-filter: blur(5px);
             animation: float 2s infinite ease-in-out;
-            z-index: 100001;
+            z-index: 100000;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
-        }
-
-        /* Garantir que os elementos do tutorial fiquem acima de tudo */
-        .instructions-overlay {
-            z-index: 100002;
-        }
-
-        .instructions-popup {
-            z-index: 100003;
-        }
-
-        /* Adicione esta classe para escurecer os cards */
-        .tutorial-active .plans-container {
-            display: flex !important;
-            opacity: 0.05 !important;
-            pointer-events: none;
-            filter: brightness(0.05) blur(2px);
-            transition: all 0.5s ease;
-        }
-
-        /* Atualize os estilos do tutorial */
-        .tutorial-active .plans-container {
-            display: flex !important;
-            opacity: 0.05 !important;
-            pointer-events: none;
-            filter: brightness(0.05) blur(2px);
-            transition: all 0.5s ease;
-        }
-
-        /* Ajuste os z-index para garantir a sobreposição correta */
-        .tutorial-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 100000;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-
-        .tutorial-spotlight {
-            position: fixed;
-            background: radial-gradient(
-                circle at center,
-                transparent 0%,
-                transparent 30%,
-                rgba(0, 0, 0, 0.95) 70%
-            );
-            transition: all 0.3s ease;
-            border-radius: 5px;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.95);
-            pointer-events: none;
-            z-index: 100001;
-        }
-
-        .tutorial-message {
-            position: fixed;
-            background: rgba(0, 255, 0, 0.15);
-            border: 2px solid var(--primary-green);
-            border-radius: 15px;
-            padding: 20px;
-            color: white;
-            font-size: 18px;
-            text-align: center;
-            max-width: 300px;
-            backdrop-filter: blur(5px);
-            animation: float 2s infinite ease-in-out;
-            z-index: 100002;
-        }
-
-        .instructions-overlay {
-            z-index: 100003;
-        }
-
-        .instructions-popup {
-            z-index: 100004;
         }
     </style>
 </head>
@@ -1394,7 +1306,7 @@
         // Adicionar após os outros event listeners
         document.getElementById('whatsapp-float').addEventListener('click', (e) => {
             if (!e.target.classList.contains('whatsapp-close')) {
-                const message = "Olá! Gostaria de saber mais informações sobre os planos de mídia digital. Pode me ajudar?";
+                const message = "Olá! Gostaria de saber mais informações sobre os planos de mídia digital. Pode me ajudar? 🙂";
                 const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_CONFIG.phoneNumber}&text=${encodeURIComponent(message)}`;
                 window.open(url, '_blank');
             }
@@ -1504,15 +1416,6 @@
                 if (existingTutorial) {
                     existingTutorial.remove();
                 }
-                
-                // Adicionar classe para escurecer os cards
-                document.body.classList.add('tutorial-active');
-                
-                // Mostrar os cards escurecidos
-                const plansContainer = document.querySelector('.plans-container');
-                plansContainer.style.display = 'flex';
-                plansContainer.style.opacity = '0.1';
-                
                 this.showInitialInstructions();
             }
 
@@ -1587,7 +1490,7 @@
             showPeriodStep() {
                 const periodSelect = document.querySelector('#billing-period');
                 if (!periodSelect) return;
-                
+
                 const tutorialOverlay = document.createElement('div');
                 tutorialOverlay.className = 'tutorial-overlay';
                 
@@ -1610,18 +1513,11 @@
                 
                 document.body.appendChild(tutorialOverlay);
 
+                // Usar mousedown ao invés de change
                 periodSelect.addEventListener('mousedown', () => {
                     tutorialOverlay.style.opacity = '0';
                     setTimeout(() => {
                         tutorialOverlay.remove();
-                        // Remover classe tutorial-active
-                        document.body.classList.remove('tutorial-active');
-                        // Mostrar os cards com animação
-                        const plansContainer = document.querySelector('.plans-container');
-                        plansContainer.style.display = 'flex';
-                        setTimeout(() => {
-                            plansContainer.classList.add('show');
-                        }, 50);
                     }, 500);
                 }, { once: true });
             }
