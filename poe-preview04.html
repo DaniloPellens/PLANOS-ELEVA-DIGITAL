@@ -16,6 +16,13 @@
             --card-purple: #9932cc;
             --card-blue: #0066cc;
             --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Z-index hierarchy */
+            --z-index-base: 1000;
+            --z-index-overlay: 1001;
+            --z-index-spotlight: 1002;
+            --z-index-message: 1003;
+            --z-index-popup: 1004;
         }
         * {
             margin: 0;
@@ -92,11 +99,21 @@
             outline-offset: 2px;
         }
         .plans-container {
-            display: flex;
-            flex-wrap: wrap;
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            gap: 30px;
             justify-content: center;
-            gap: 40px;
-            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .plans-container.show {
+            display: flex !important;
+            opacity: 1 !important;
+            transform: translateY(0);
+            filter: none !important;
+            pointer-events: all !important;
+            gap: 30px;
         }
         .plan-card {
             flex: 1;
@@ -177,11 +194,11 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 80px 80px 0 0;
-            border-color: var(--primary-green) transparent transparent transparent;
+            width: 80px;
+            height: 80px;
+            border-radius: 15px 0 80px 0;
+            background: var(--primary-green);
+            clip-path: polygon(0 0, 0% 100%, 100% 0);
             opacity: 0;
             animation: blinkSequence 6s infinite;
             display: none;
@@ -195,8 +212,8 @@
         }
         .discount-text {
             position: absolute;
-            top: -65px;
-            left: 8px;
+            top: 15px;
+            left: 5px;
             transform: rotate(-45deg);
             color: black;
             font-weight: bold;
@@ -689,11 +706,17 @@
 
         .tutorial-spotlight {
             position: fixed;
-            background: radial-gradient(circle at center, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.95) 70%);
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                transparent 30%,
+                rgba(0, 0, 0, 0.95) 70%
+            );
             transition: all 0.3s ease;
             border-radius: 5px;
             box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.95);
             pointer-events: none;
+            z-index: 100000;
         }
 
         .tutorial-message {
@@ -708,12 +731,39 @@
             max-width: 300px;
             backdrop-filter: blur(5px);
             animation: float 2s infinite ease-in-out;
-            z-index: 100000;
+            z-index: 100001;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
+        }
+
+        /* Garantir que os elementos do tutorial fiquem acima de tudo */
+        .instructions-overlay {
+            z-index: 100002;
+        }
+
+        .instructions-popup {
+            z-index: 100003;
+        }
+
+        /* Adicione esta classe para escurecer os cards */
+        .tutorial-active .plans-container {
+            display: flex !important;
+            opacity: 0.1 !important;
+            pointer-events: none;
+            filter: brightness(0.1);
+        }
+
+        /* Adicionar suporte para preferências de movimento reduzido */
+        @media (prefers-reduced-motion: reduce) {
+            .tutorial-message,
+            .tutorial-spotlight,
+            .tutorial-overlay {
+                transition: none !important;
+                animation: none !important;
+            }
         }
     </style>
 </head>
@@ -842,6 +892,12 @@
     <audio id="notification-sound" preload="auto">
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
+        const isMobileDevice = () => {
+            return (('ontouchstart' in window) ||
+                    (navigator.maxTouchPoints > 0) ||
+                    (navigator.msMaxTouchPoints > 0));
+        };
+
         const calculateInsertions = (monthlyInsertions, selectedPeriod) => {
             if (selectedPeriod === 'weekly' || selectedPeriod === 'biweekly') {
                 const daysInPeriod = {
@@ -1263,50 +1319,95 @@
             });
         });
 
-        // Otimizar função de exportação PNG
+        // Atualizar a função de exportação PNG
         document.getElementById('export-btn').addEventListener('click', () => {
-            const container = document.querySelector('.container');
-            
-            // Esconder botões temporariamente
-            const actionButtons = document.querySelector('.action-buttons');
-            const whatsappFloat = document.querySelector('.whatsapp-float');
-            actionButtons.style.display = 'none';
-            whatsappFloat.style.display = 'none';
-            
-            html2canvas(container, {
+            // Selecionar o container principal que contém os cards e a mensagem
+            const mainContainer = document.querySelector('main.container');
+            const plansContainer = mainContainer.querySelector('.plans-container');
+            const savingsMessage = mainContainer.querySelector('.savings-message');
+
+            // Garantir que os cards estejam visíveis
+            plansContainer.style.display = 'flex';
+            plansContainer.style.opacity = '1';
+            plansContainer.style.visibility = 'visible';
+
+            // Esconder elementos que não devem aparecer na captura
+            const elementsToHide = [
+                document.querySelector('.location-selector'),
+                document.querySelector('.pricing-header'),
+                document.querySelector('.action-buttons'),
+                document.querySelector('.whatsapp-float')
+            ];
+
+            elementsToHide.forEach(el => {
+                if (el) el.style.display = 'none';
+            });
+
+            // Configurar html2canvas
+            html2canvas(mainContainer, {
                 backgroundColor: '#121212',
-                scale: 1.5,
+                scale: 2,
                 useCORS: true,
-                logging: false,
-                imageTimeout: 2000,
-                removeContainer: true,
-                width: container.offsetWidth,
-                height: container.offsetHeight,
                 allowTaint: true,
-                foreignObjectRendering: true
+                logging: false,
+                onclone: (clonedDoc) => {
+                    const clonedContainer = clonedDoc.querySelector('.plans-container');
+                    if (clonedContainer) {
+                        // Garantir que os cards estejam visíveis no clone
+                        clonedContainer.style.cssText = `
+                            display: flex !important;
+                            opacity: 1 !important;
+                            visibility: visible !important;
+                            justify-content: center;
+                            gap: 30px;
+                            flex-wrap: wrap;
+                            margin: 20px auto;
+                        `;
+
+                        // Garantir que cada card esteja visível
+                        clonedContainer.querySelectorAll('.plan-card').forEach(card => {
+                            card.style.cssText = `
+                                opacity: 1 !important;
+                                visibility: visible !important;
+                                transform: none !important;
+                                display: flex !important;
+                                flex-direction: column;
+                                justify-content: space-between;
+                            `;
+                        });
+                    }
+                }
             }).then(canvas => {
-                // Restaurar botões
-                actionButtons.style.display = 'block';
-                whatsappFloat.style.display = 'flex';
-                
+                // Restaurar elementos escondidos
+                elementsToHide.forEach(el => {
+                    if (el) el.style.display = '';
+                });
+
                 const selectedLocation = locationSelect.options[locationSelect.selectedIndex].text.split(' ')[0];
                 const selectedPeriod = billingPeriodSelect.options[billingPeriodSelect.selectedIndex].text;
                 const currentDate = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
                 
-                // Comprimir imagem com qualidade otimizada
-                const compressedImage = canvas.toDataURL('image/png', 0.85); // 85% de qualidade
+                // Gerar imagem com alta qualidade
+                const compressedImage = canvas.toDataURL('image/png', 1.0);
                 
+                // Criar link para download
                 const link = document.createElement('a');
                 link.download = `planos-midia_${selectedLocation}_${selectedPeriod}_${currentDate}.png`;
                 link.href = compressedImage;
                 link.click();
+            }).catch(error => {
+                console.error('Erro ao gerar imagem:', error);
+                // Restaurar elementos em caso de erro
+                elementsToHide.forEach(el => {
+                    if (el) el.style.display = '';
+                });
             });
         });
 
         // Adicionar após os outros event listeners
         document.getElementById('whatsapp-float').addEventListener('click', (e) => {
             if (!e.target.classList.contains('whatsapp-close')) {
-                const message = "Olá! Gostaria de saber mais informações sobre os planos de mídia digital. Pode me ajudar? 🙂";
+                const message = "Olá! Gostaria de saber mais informações sobre os planos de mídia digital. Pode me ajudar?";
                 const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_CONFIG.phoneNumber}&text=${encodeURIComponent(message)}`;
                 window.open(url, '_blank');
             }
@@ -1411,22 +1512,42 @@
         // Sistema de Tutorial
         class TutorialSystem {
             constructor() {
-                // Remover tutorial anterior se existir
-                const existingTutorial = document.querySelector('.instructions-overlay');
-                if (existingTutorial) {
-                    existingTutorial.remove();
+                this.state = {
+                    currentStep: null,
+                    isActive: false,
+                    lastInteraction: null
+                };
+                
+                this.observers = [];
+                this.handleResize = this.handleResize.bind(this);
+                
+                this.checkBrowserSupport();
+                this.cleanup();
+                this.init();
+                
+                window.addEventListener('resize', this.handleResize);
+            }
+
+            init() {
+                // Esconder os cards inicialmente
+                const plansContainer = document.querySelector('.plans-container');
+                if (plansContainer) {
+                    plansContainer.style.display = 'none';
+                    plansContainer.style.opacity = '0';
                 }
                 this.showInitialInstructions();
             }
 
             showInitialInstructions() {
                 const instructionsHTML = `
-                    <div class="instructions-overlay" id="instructions-overlay">
+                    <div class="instructions-overlay" id="instructions-overlay" role="dialog" aria-labelledby="tutorial-title">
                         <div class="instructions-popup">
-                            <button class="instructions-close" onclick="window.tutorial.startStepByStepTutorial()">×</button>
+                            <button class="instructions-close" 
+                                    onclick="window.tutorial.startStepByStepTutorial()"
+                                    aria-label="Fechar tutorial">×</button>
                             <div class="instructions-content">
-                                <h2 style="color: var(--primary-green); margin-bottom: 20px;">Bem-vindo!</h2>
-                                <div class="instruction-step">
+                                <h2 id="tutorial-title" style="color: var(--primary-green); margin-bottom: 20px;">Bem-vindo!</h2>
+                                <div class="instruction-step" role="alert">
                                     <h3>Vamos te ajudar a escolher o melhor plano</h3>
                                     <p>Siga nosso passo a passo para uma escolha personalizada</p>
                                 </div>
@@ -1448,78 +1569,221 @@
                 }
             }
 
-            showLocationStep() {
-                const locationSelect = document.querySelector('#location-select');
-                if (!locationSelect) return;
-
-                const tutorialOverlay = document.createElement('div');
-                tutorialOverlay.className = 'tutorial-overlay';
-                
-                const rect = locationSelect.getBoundingClientRect();
-                
-                tutorialOverlay.innerHTML = `
-                    <div class="tutorial-spotlight" style="
-                        width: ${rect.width + 80}px;
-                        height: ${rect.height + 80}px;
-                        left: ${rect.left - 40}px;
-                        top: ${rect.top - 40}px;
-                    "></div>
-                    <div class="tutorial-message" style="
-                        top: ${rect.bottom + 20}px;
-                        left: ${rect.left}px;
-                    ">
-                        Primeiro, selecione sua unidade aqui 👆
-                    </div>
-                `;
-                
-                document.body.appendChild(tutorialOverlay);
-
-                // Usar mousedown ao invés de change
-                locationSelect.addEventListener('mousedown', () => {
+            handleLocationSelect() {
+                const tutorialOverlay = document.querySelector('.tutorial-overlay');
+                if (tutorialOverlay) {
                     tutorialOverlay.style.opacity = '0';
                     setTimeout(() => {
                         tutorialOverlay.remove();
-                        // Aguardar 3 segundos antes de mostrar o próximo passo
                         setTimeout(() => {
                             this.showPeriodStep();
                         }, 3000);
                     }, 500);
-                }, { once: true });
+                }
+            }
+
+            checkBrowserSupport() {
+                try {
+                    const support = {
+                        localStorage: !!window.localStorage,
+                        flexbox: CSS.supports('display', 'flex'),
+                        grid: CSS.supports('display', 'grid')
+                    };
+
+                    if (!Object.values(support).every(Boolean)) {
+                        console.warn('Alguns recursos podem não funcionar corretamente', support);
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar suporte do navegador:', error);
+                }
+            }
+
+            cleanup() {
+                try {
+                    const existingOverlays = document.querySelectorAll('.tutorial-overlay, .instructions-overlay');
+                    existingOverlays.forEach(overlay => overlay.remove());
+                    
+                    this.observers = [];
+                    localStorage.removeItem('tutorialShown');
+                } catch (error) {
+                    console.error('Erro na limpeza:', error);
+                }
+            }
+
+            setState(newState) {
+                try {
+                    this.state = { ...this.state, ...newState };
+                    this.observers.forEach(observer => observer(this.state));
+                    this.saveTutorialState();
+                } catch (error) {
+                    console.error('Erro ao atualizar estado:', error);
+                }
+            }
+
+            saveTutorialState() {
+                try {
+                    localStorage.setItem('tutorialState', JSON.stringify(this.state));
+                } catch (error) {
+                    console.error('Erro ao salvar estado:', error);
+                }
+            }
+
+            handleResize() {
+                if (this.state.currentStep) {
+                    this.updateSpotlightPosition(this.state.currentStep);
+                }
+            }
+
+            updateSpotlightPosition(elementId) {
+                try {
+                    const element = document.querySelector(elementId);
+                    if (!element) return;
+
+                    const rect = element.getBoundingClientRect();
+                    const isMobile = window.innerWidth <= 768;
+
+                    return {
+                        width: isMobile ? rect.width + 40 : rect.width + 80,
+                        height: isMobile ? rect.height + 40 : rect.height + 80,
+                        left: isMobile ? rect.left - 20 : rect.left - 40,
+                        top: isMobile ? rect.top - 20 : rect.top - 40
+                    };
+                } catch (error) {
+                    console.error('Erro ao atualizar posição:', error);
+                    return null;
+                }
+            }
+
+            showLocationStep() {
+                try {
+                    const locationSelect = document.querySelector('#location-select');
+                    if (!locationSelect) {
+                        throw new Error('Elemento de seleção de localização não encontrado');
+                    }
+
+                    this.setState({ currentStep: '#location-select' });
+                    
+                    const tutorialOverlay = document.createElement('div');
+                    tutorialOverlay.className = 'tutorial-overlay';
+                    
+                    const position = this.updateSpotlightPosition('#location-select');
+                    if (!position) return;
+                    
+                    tutorialOverlay.innerHTML = `
+                        <div class="tutorial-spotlight" style="
+                            width: ${position.width}px;
+                            height: ${position.height}px;
+                            left: ${position.left}px;
+                            top: ${position.top}px;
+                        "></div>
+                        <div class="tutorial-message" style="
+                            top: ${position.top + position.height + 20}px;
+                            left: ${position.left}px;
+                        ">
+                            Primeiro, selecione sua unidade aqui 👆
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(tutorialOverlay);
+
+                    locationSelect.addEventListener('mousedown', this.handleLocationSelect.bind(this), { once: true });
+                    locationSelect.addEventListener('touchstart', this.handleLocationSelect.bind(this), { once: true });
+                } catch (error) {
+                    console.error('Erro ao mostrar tutorial de localização:', error);
+                    this.handleError();
+                }
+            }
+
+            handleError() {
+                // Tenta recuperar o tutorial para um estado consistente
+                this.cleanup();
+                this.setState({ currentStep: null, isActive: false });
+                
+                const plansContainer = document.querySelector('.plans-container');
+                if (plansContainer) {
+                    plansContainer.style.display = 'flex';
+                    plansContainer.style.opacity = '1';
+                    plansContainer.classList.add('show');
+                }
+            }
+
+            destroy() {
+                window.removeEventListener('resize', this.handleResize);
+                this.cleanup();
+            }
+
+            handleTouchInteraction() {
+                if (isMobileDevice()) {
+                    this.spotlightSize = {
+                        width: 60,
+                        height: 60,
+                        padding: 20
+                    };
+                }
             }
 
             showPeriodStep() {
-                const periodSelect = document.querySelector('#billing-period');
-                if (!periodSelect) return;
+                try {
+                    const periodSelect = document.querySelector('#billing-period');
+                    if (!periodSelect) {
+                        throw new Error('Elemento de seleção de período não encontrado');
+                    }
 
-                const tutorialOverlay = document.createElement('div');
-                tutorialOverlay.className = 'tutorial-overlay';
-                
-                const rect = periodSelect.getBoundingClientRect();
-                
-                tutorialOverlay.innerHTML = `
-                    <div class="tutorial-spotlight" style="
-                        width: ${rect.width + 80}px;
-                        height: ${rect.height + 80}px;
-                        left: ${rect.left - 40}px;
-                        top: ${rect.top - 40}px;
-                    "></div>
-                    <div class="tutorial-message" style="
-                        top: ${rect.bottom + 20}px;
-                        left: ${rect.left}px;
-                    ">
-                        Agora, escolha o período do contrato 👆
-                    </div>
-                `;
-                
-                document.body.appendChild(tutorialOverlay);
+                    this.setState({ currentStep: '#billing-period' });
+                    
+                    const tutorialOverlay = document.createElement('div');
+                    tutorialOverlay.className = 'tutorial-overlay';
+                    
+                    const rect = periodSelect.getBoundingClientRect();
+                    
+                    tutorialOverlay.innerHTML = `
+                        <div class="tutorial-spotlight" style="
+                            width: ${rect.width + 80}px;
+                            height: ${rect.height + 80}px;
+                            left: ${rect.left - 40}px;
+                            top: ${rect.top - 40}px;
+                        "></div>
+                        <div class="tutorial-message" style="
+                            top: ${rect.bottom + 20}px;
+                            left: ${rect.left}px;
+                        ">
+                            Agora, escolha o período do contrato 👆
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(tutorialOverlay);
 
-                // Usar mousedown ao invés de change
-                periodSelect.addEventListener('mousedown', () => {
+                    periodSelect.addEventListener('mousedown', () => {
+                        tutorialOverlay.style.opacity = '0';
+                        setTimeout(() => {
+                            tutorialOverlay.remove();
+                            // Mostrar os cards após o tutorial
+                            const plansContainer = document.querySelector('.plans-container');
+                            if (plansContainer) {
+                                plansContainer.style.display = 'flex';
+                                plansContainer.style.opacity = '1';
+                                plansContainer.classList.add('show');
+                                document.body.classList.remove('tutorial-active');
+                            }
+                        }, 500);
+                    }, { once: true });
+                } catch (error) {
+                    console.error('Erro ao mostrar tutorial de período:', error);
+                    this.handleError();
+                }
+            }
+
+            handleLocationSelect() {
+                const tutorialOverlay = document.querySelector('.tutorial-overlay');
+                if (tutorialOverlay) {
                     tutorialOverlay.style.opacity = '0';
                     setTimeout(() => {
                         tutorialOverlay.remove();
+                        setTimeout(() => {
+                            this.showPeriodStep();
+                        }, 1000); // Reduzido para 1 segundo
                     }, 500);
-                }, { once: true });
+                }
             }
         }
 
